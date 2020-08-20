@@ -44,7 +44,12 @@ public class ArrayStorage {
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        return new Resume[0];
+        int size = size();
+        Resume[] filledStorage = new Resume[size];
+        for (int i = 0; i < size; i++) {
+            filledStorage[i] = storage[i];
+        }
+        return filledStorage;
     }
 
     int size() {
