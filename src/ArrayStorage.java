@@ -13,7 +13,15 @@ public class ArrayStorage {
     }
 
     Resume get(String uuid) {
-        return null;
+        int size = size();
+        Resume resume = new Resume();
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                resume.uuid = uuid;
+                return resume;
+            }
+        }
+        return resume;
     }
 
     void delete(String uuid) {
