@@ -2,6 +2,8 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
 
+import java.util.Objects;
+
 /**
  * Array based storage for Resumes
  */
@@ -17,39 +19,52 @@ public class ArrayStorage {
     }
 
     public void save(Resume r) {
-        storage[size] = r;
-        size++;
+        Objects.requireNonNull(r, "resume must not be null");
+        int index = uuidSearch(r.getUuid());
+        if (index >= 0) {
+            update(r);
+        } else {
+            if (size < storage.length) {
+                storage[size] = r;
+                size++;
+            } else {
+                System.out.println("Storage is Full");
+            }
+        }
     }
 
     public Resume get(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return storage[i];
-            }
+        Objects.requireNonNull(uuid, "uuid must not be null");
+        int index = uuidSearch(uuid);
+        if (index >= 0) {
+            return storage[index];
         }
+        System.out.println("Resume not found");
         return null;
     }
 
     public void delete(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                for (int j = i; j < size - 1; j++) {
-                    storage[j] = storage[j + 1];
-                }
-                size--;
-                break;
+        Objects.requireNonNull(uuid, "uuid must not be null");
+        int index = uuidSearch(uuid);
+        if (index >= 0) {
+            for (int i = index; i < size - 1; i++) {
+                storage[i] = storage[i + 1];
             }
+            size--;
+        } else {
+            System.out.println("Nothing to delete");
         }
     }
 
-    public void update(Resume resume) {
-        String uuid = resume.getUuid();
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                storage[i] = resume;
-                break;
-            }
+    public boolean update(Resume resume) {
+        Objects.requireNonNull(resume, "resume must not be null");
+        int index = uuidSearch(resume.getUuid());
+        if (index >= 0) {
+            storage[index] = resume;
+            return true;
         }
+        System.out.println("Nothing to update");
+        return false;
     }
 
     /**
@@ -65,5 +80,14 @@ public class ArrayStorage {
 
     public int size() {
         return size;
+    }
+
+    private int uuidSearch(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
