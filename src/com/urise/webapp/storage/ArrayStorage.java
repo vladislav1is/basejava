@@ -14,7 +14,7 @@ public class ArrayStorage {
 
     public void save(Resume r) {
         Objects.requireNonNull(r, "resume must not be null");
-        int index = uuidSearch(r.getUuid());
+        int index = indexOf(r.getUuid());
         if (index >= 0) {
             update(r);
         } else {
@@ -29,7 +29,7 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         Objects.requireNonNull(uuid, "uuid must not be null");
-        int index = uuidSearch(uuid);
+        int index = indexOf(uuid);
         if (index >= 0) {
             return storage[index];
         }
@@ -39,7 +39,7 @@ public class ArrayStorage {
 
     public void delete(String uuid) {
         Objects.requireNonNull(uuid, "uuid must not be null");
-        int index = uuidSearch(uuid);
+        int index = indexOf(uuid);
         if (index >= 0) {
             for (int i = index; i < size - 1; i++) {
                 storage[i] = storage[i + 1];
@@ -52,7 +52,7 @@ public class ArrayStorage {
 
     public boolean update(Resume resume) {
         Objects.requireNonNull(resume, "resume must not be null");
-        int index = uuidSearch(resume.getUuid());
+        int index = indexOf(resume.getUuid());
         if (index >= 0) {
             storage[index] = resume;
             return true;
@@ -77,7 +77,7 @@ public class ArrayStorage {
         return size;
     }
 
-    private int uuidSearch(String uuid) {
+    private int indexOf(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
