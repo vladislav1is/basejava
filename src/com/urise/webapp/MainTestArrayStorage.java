@@ -33,6 +33,14 @@ public class MainTestArrayStorage {
         printAll();
 
         System.out.println("Size: " + ARRAY_STORAGE.size());
+
+        //If we have more then 10000 els
+        System.out.println("\nIf Storage is Full:");
+        for (int i = 0; i < 10003; i++) {
+            Resume tmp = new Resume();
+            tmp.setUuid("t" + i);
+            ARRAY_STORAGE.save(tmp);
+        }
     }
 
     static void printAll() {
