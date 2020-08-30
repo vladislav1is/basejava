@@ -42,6 +42,16 @@ public class ArrayStorage {
         }
     }
 
+    public void update(Resume resume) {
+        String uuid = resume.getUuid();
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                storage[i] = resume;
+                break;
+            }
+        }
+    }
+
     /**
      * @return array, contains only Resumes in storage (without null)
      */
