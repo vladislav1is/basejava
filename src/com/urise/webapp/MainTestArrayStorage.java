@@ -35,9 +35,9 @@ public class MainTestArrayStorage {
 
         System.out.println("Size: " + ARRAY_STORAGE.size());
 
-        //If we have more then 10000 els
-        System.out.println("\nIf Storage is Full:");
-        for (int i = 0; i < 10003; i++) {
+        //If we have more then 10_000 elements
+        System.out.println("\nIf Storage is Fill:");
+        for (int i = 0; i < 10_003; i++) {
             Resume tmp = new Resume();
             tmp.setUuid("t" + i);
             ARRAY_STORAGE.save(tmp);

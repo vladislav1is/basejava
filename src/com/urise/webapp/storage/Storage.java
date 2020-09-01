@@ -13,7 +13,7 @@ public interface Storage {
 
     void delete(String uuid);
 
-    boolean update(Resume resume);
+    void update(Resume r);
 
     /**
      * @return array, contains only Resumes in storage (without null)

@@ -9,22 +9,23 @@ import java.util.Objects;
  * Array based storage for Resumes
  */
 public class ArrayStorage implements Storage {
-    private static final int STORAGE_LIMIT = 10000;
+    private static final int STORAGE_LIMIT = 10_000;
 
     private Resume[] storage = new Resume[STORAGE_LIMIT];
     private int size;
 
-    public void save(Resume r) {
-        Objects.requireNonNull(r, "resume must not be null");
-        int index = indexOf(r.getUuid());
+    public void save(Resume resume) {
+        Objects.requireNonNull(resume, "resume must not be null");
+        int index = indexOf(resume.getUuid());
+        String uuid = resume.getUuid();
         if (index >= 0) {
-            update(r);
+            System.out.printf("Resume is already included %s\n", uuid);
         } else {
             if (size < storage.length) {
-                storage[size] = r;
+                storage[size] = resume;
                 size++;
             } else {
-                System.out.println("Storage is Full");
+                System.out.printf("Storage is already fill, no place for %s\n", uuid);
             }
         }
     }
@@ -35,7 +36,7 @@ public class ArrayStorage implements Storage {
         if (index >= 0) {
             return storage[index];
         }
-        System.out.println("Resume not found");
+        System.out.printf("Resume with uuid:%s not found\n", uuid);
         return null;
     }
 
@@ -48,26 +49,25 @@ public class ArrayStorage implements Storage {
             }
             size--;
         } else {
-            System.out.println("Nothing to delete");
+            System.out.printf("Resume with uuid:%s not found\n", uuid);
         }
     }
 
-    public boolean update(Resume resume) {
+    public void update(Resume resume) {
         Objects.requireNonNull(resume, "resume must not be null");
-        int index = indexOf(resume.getUuid());
+        String uuid = resume.getUuid();
+        int index = indexOf(uuid);
         if (index >= 0) {
             storage[index] = resume;
-            return true;
         }
-        System.out.println("Nothing to update");
-        return false;
+        System.out.printf("Resume with uuid:%s not found\n", uuid);
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
+        return Arrays.copyOf(storage, size);
     }
 
     public void clear() {
