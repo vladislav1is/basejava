@@ -26,16 +26,6 @@ public class ArrayStorage extends AbstractArrayStorage {
         }
     }
 
-    public Resume get(String uuid) {
-        Objects.requireNonNull(uuid, "uuid must not be null");
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            return storage[index];
-        }
-        System.out.printf("Resume %s not exist\n", uuid);
-        return null;
-    }
-
     public void delete(String uuid) {
         Objects.requireNonNull(uuid, "uuid must not be null");
         int index = indexOf(uuid);
@@ -69,7 +59,7 @@ public class ArrayStorage extends AbstractArrayStorage {
         size = 0;
     }
 
-    private int indexOf(String uuid) {
+    protected int indexOf(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
