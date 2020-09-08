@@ -48,7 +48,7 @@ public abstract class AbstractArrayStorage implements Storage {
         Objects.requireNonNull(uuid, "uuid must not be null");
         int index = indexOf(uuid);
         if (index >= 0) {
-            if (size - 1 - index >= 0) System.arraycopy(storage, index + 1, storage, index, size - 1 - index);
+            fillDeletedElement(index);
             storage[size - 1] = null;
             size--;
         } else {
@@ -81,4 +81,6 @@ public abstract class AbstractArrayStorage implements Storage {
     protected abstract int indexOf(String uuid);
 
     protected abstract void insertElement(Resume resume, int index);
+
+    protected abstract void fillDeletedElement(int index);
 }

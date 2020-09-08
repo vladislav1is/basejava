@@ -20,4 +20,10 @@ public class ArrayStorage extends AbstractArrayStorage {
     protected void insertElement(Resume resume, int index) {
         storage[size] = resume;
     }
+
+    @Override
+    protected void fillDeletedElement(int index) {
+        storage[index] = storage[size - 1];
+    }
+
 }
