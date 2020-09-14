@@ -1,4 +1,4 @@
-package com.urise.webapp.exception;
+package com.redfox.webapp.exception;
 
 public class NotExistStorageException extends StorageException {
     public NotExistStorageException(String uuid) {

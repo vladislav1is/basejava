@@ -1,4 +1,4 @@
-package com.urise.webapp.exception;
+package com.redfox.webapp.exception;
 
 public class StorageException extends RuntimeException {
     private final String uuid;

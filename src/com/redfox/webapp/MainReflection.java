@@ -1,6 +1,6 @@
-package com.urise.webapp;
+package com.redfox.webapp;
 
-import com.urise.webapp.model.Resume;
+import com.redfox.webapp.model.Resume;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

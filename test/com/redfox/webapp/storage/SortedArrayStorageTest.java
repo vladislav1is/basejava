@@ -1,4 +1,4 @@
-package com.urise.webapp.storage;
+package com.redfox.webapp.storage;
 
 public class SortedArrayStorageTest extends AbstractArrayStorageTest {
 

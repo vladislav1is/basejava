@@ -1,12 +1,11 @@
-package com.urise.webapp.storage;
+package com.redfox.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.exception.StorageException;
-import com.urise.webapp.model.Resume;
+import com.redfox.webapp.exception.ExistStorageException;
+import com.redfox.webapp.exception.NotExistStorageException;
+import com.redfox.webapp.exception.StorageException;
+import com.redfox.webapp.model.Resume;
 
 import java.util.Arrays;
-import java.util.Objects;
 
 /**
  * Array based storage for Resumes
@@ -14,15 +13,14 @@ import java.util.Objects;
 public abstract class AbstractArrayStorage implements Storage {
     private static final int STORAGE_LIMIT = 10_000;
 
-    protected Resume[] storage = new Resume[STORAGE_LIMIT];
-    protected int size;
+    Resume[] storage = new Resume[STORAGE_LIMIT];
+    int size;
 
     public int size() {
         return size;
     }
 
     public Resume get(String uuid) {
-        Objects.requireNonNull(uuid, "uuid must not be null");
         int index = indexOf(uuid);
         if (index >= 0) {
             return storage[index];
@@ -31,35 +29,30 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     public void save(Resume resume) {
-        Objects.requireNonNull(resume, "resume must not be null");
         int index = indexOf(resume.getUuid());
         String uuid = resume.getUuid();
         if (index >= 0) {
             throw new ExistStorageException(uuid);
+        } else if (size < storage.length) {
+            insertElement(resume, index);
+            size++;
         } else {
-            if (size < storage.length) {
-                insertElement(resume, index);
-                size++;
-            } else {
-                throw new StorageException("Storage overflow", uuid);
-            }
+            throw new StorageException("Storage overflow", uuid);
         }
     }
 
     public void delete(String uuid) {
-        Objects.requireNonNull(uuid, "uuid must not be null");
         int index = indexOf(uuid);
         if (index >= 0) {
             fillDeletedElement(index);
-            storage[size - 1] = null;
             size--;
+            storage[size] = null;
         } else {
             throw new NotExistStorageException(uuid);
         }
     }
 
     public void update(Resume resume) {
-        Objects.requireNonNull(resume, "resume must not be null");
         String uuid = resume.getUuid();
         int index = indexOf(uuid);
         if (index >= 0) {

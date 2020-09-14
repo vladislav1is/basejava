@@ -1,4 +1,4 @@
-package com.urise.webapp;
+package com.redfox.webapp;
 
 public class MainString {
     public static void main(String[] args) {

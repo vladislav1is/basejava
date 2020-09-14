@@ -1,8 +1,8 @@
-package com.urise.webapp;
+package com.redfox.webapp;
 
-import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.SortedArrayStorage;
-import com.urise.webapp.storage.Storage;
+import com.redfox.webapp.model.Resume;
+import com.redfox.webapp.storage.SortedArrayStorage;
+import com.redfox.webapp.storage.Storage;
 
 /**
  * Test for your com.urise.webapp.storage.ArrayStorage implementation

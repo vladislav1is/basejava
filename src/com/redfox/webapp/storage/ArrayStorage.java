@@ -1,6 +1,6 @@
-package com.urise.webapp.storage;
+package com.redfox.webapp.storage;
 
-import com.urise.webapp.model.Resume;
+import com.redfox.webapp.model.Resume;
 
 /**
  * Array based storage for Resumes
