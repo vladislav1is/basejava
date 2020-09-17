@@ -13,5 +13,8 @@ public class MainString {
         String s1 = new String("abc");
         String s2 = new String("abc");
         System.out.println(s1 == s2);
+        String s3 = "test";
+        String s4 = "test";
+        System.out.println(s3 == s4);
     }
 }
