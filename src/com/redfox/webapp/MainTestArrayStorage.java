@@ -1,16 +1,14 @@
 package com.redfox.webapp;
 
 import com.redfox.webapp.model.Resume;
-import com.redfox.webapp.storage.MapStorage;
+import com.redfox.webapp.storage.SortedArrayStorage;
 import com.redfox.webapp.storage.Storage;
-
-import java.util.HashMap;
 
 /**
  * Test for your com.urise.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
-    static final Storage ARRAY_STORAGE = new MapStorage(new HashMap<>());
+    static final Storage ARRAY_STORAGE = new SortedArrayStorage();//new ListStorage(new ArrayList<>());
 
     public static void main(String[] args) {
         Resume r1 = new Resume("uuid1");
@@ -30,7 +28,7 @@ public class MainTestArrayStorage {
         System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
         System.out.println("Size: " + ARRAY_STORAGE.size());
 
-        System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
+        //System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
 
         printAll();
         ARRAY_STORAGE.delete(r1.getUuid());

@@ -65,7 +65,32 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public int size() {
-        return storage.size();
+    protected Resume getElementBy(int index) {
+        return null;
+    }
+
+    @Override
+    protected void setElementBy(int index, Resume resume) {
+
+    }
+
+    @Override
+    protected void deleteElementBy(int index) {
+
+    }
+
+    @Override
+    protected void clearElements() {
+
+    }
+
+    @Override
+    protected Resume[] getAllElements() {
+        return new Resume[0];
+    }
+
+    @Override
+    protected int indexOf(String uuid) {
+        return 0;
     }
 }

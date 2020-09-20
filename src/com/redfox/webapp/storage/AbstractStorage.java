@@ -1,5 +1,6 @@
 package com.redfox.webapp.storage;
 
+import com.redfox.webapp.exception.NotExistStorageException;
 import com.redfox.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
@@ -9,21 +10,62 @@ public abstract class AbstractStorage implements Storage {
     public abstract void save(Resume resume);
 
     @Override
-    public abstract Resume get(String uuid);
+    public Resume get(String uuid) {
+        int index = indexOf(uuid);
+        if (index >= 0) {
+            return getElementBy(index);
+        }
+        throw new NotExistStorageException(uuid);
+    }
 
     @Override
-    public abstract void delete(String uuid);
+    public void delete(String uuid) {
+        int index = indexOf(uuid);
+        if (index >= 0) {
+            deleteElementBy(index);
+        } else {
+            throw new NotExistStorageException(uuid);
+        }
+    }
 
     @Override
-    public abstract void update(Resume resume);
+    public void update(Resume resume) {
+        String uuid = resume.getUuid();
+        int index = indexOf(uuid);
+        if (index >= 0) {
+            setElementBy(index, resume);
+        } else {
+            throw new NotExistStorageException(uuid);
+        }
+    }
+
+    /**
+     * @return array, contains only Resumes in storage (without null)
+     */
+    @Override
+    public Resume[] getAll() {
+        return getAllElements();
+    }
 
     @Override
-    public abstract Resume[] getAll();
-
-    @Override
-    public abstract void clear();
+    public void clear() {
+        clearElements();
+        size = 0;
+    }
 
     public int size() {
         return size;
     }
+
+    protected abstract int indexOf(String uuid);
+
+    protected abstract Resume getElementBy(int index);
+
+    protected abstract void deleteElementBy(int index);
+
+    protected abstract void setElementBy(int index, Resume resume);
+
+    protected abstract Resume[] getAllElements();
+
+    protected abstract void clearElements();
 }

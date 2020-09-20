@@ -1,7 +1,6 @@
 package com.redfox.webapp.storage;
 
 import com.redfox.webapp.exception.ExistStorageException;
-import com.redfox.webapp.exception.NotExistStorageException;
 import com.redfox.webapp.model.Resume;
 
 import java.util.List;
@@ -24,47 +23,22 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume get(String uuid) {
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            return storage.get(index);
-        }
-        throw new NotExistStorageException(uuid);
+    protected Resume getElementBy(int index) {
+        return storage.get(index);
     }
 
     @Override
-    public void delete(String uuid) {
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            size--;
-            storage.remove(index);
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
+    protected void setElementBy(int index, Resume resume) {
+        storage.set(index, resume);
     }
 
     @Override
-    public void update(Resume resume) {
-        int index = storage.indexOf(resume);
-        if (index >= 0) {
-            storage.set(index, resume);
-        } else {
-            throw new NotExistStorageException(resume.getUuid());
-        }
+    protected void deleteElementBy(int index) {
+        size--;
+        storage.remove(index);
     }
 
-    @Override
-    public Resume[] getAll() {
-        return storage.toArray(new Resume[size]);
-    }
-
-    @Override
-    public void clear() {
-        storage.clear();
-        size = 0;
-    }
-
-    private int indexOf(String uuid) {
+    protected int indexOf(String uuid) {
         int size = storage.size();
         for (int i = 0; i < size; i++) {
             if (storage.get(i).getUuid().equals(uuid)) {
@@ -72,5 +46,15 @@ public class ListStorage extends AbstractStorage {
             }
         }
         return -1;
+    }
+
+    @Override
+    protected void clearElements() {
+        storage.clear();
+    }
+
+    @Override
+    protected Resume[] getAllElements() {
+        return storage.toArray(new Resume[size]);
     }
 }

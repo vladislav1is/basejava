@@ -1,7 +1,6 @@
 package com.redfox.webapp.storage;
 
 import com.redfox.webapp.exception.ExistStorageException;
-import com.redfox.webapp.exception.NotExistStorageException;
 import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
 
@@ -16,8 +15,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     Resume[] storage = new Resume[STORAGE_LIMIT];
 
     public void save(Resume resume) {
-        int index = indexOf(resume.getUuid());
         String uuid = resume.getUuid();
+        int index = indexOf(uuid);
         if (index >= 0) {
             throw new ExistStorageException(uuid);
         } else if (size < storage.length) {
@@ -28,45 +27,31 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
-    public Resume get(String uuid) {
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            return storage[index];
-        }
-        throw new NotExistStorageException(uuid);
+    @Override
+    protected Resume getElementBy(int index) {
+        return storage[index];
     }
 
-    public void delete(String uuid) {
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            fillDeletedElement(index);
-            size--;
-            storage[size] = null;
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
+    @Override
+    protected void deleteElementBy(int index) {
+        fillDeletedElement(index);
+        size--;
+        storage[size] = null;
     }
 
-    public void update(Resume resume) {
-        String uuid = resume.getUuid();
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            storage[index] = resume;
-        } else {
-            throw new NotExistStorageException(uuid);
-        }
+    @Override
+    protected void setElementBy(int index, Resume resume) {
+        storage[index] = resume;
     }
 
-    /**
-     * @return array, contains only Resumes in storage (without null)
-     */
-    public Resume[] getAll() {
+    @Override
+    protected Resume[] getAllElements() {
         return Arrays.copyOf(storage, size);
     }
 
-    public void clear() {
+    @Override
+    protected void clearElements() {
         Arrays.fill(storage, 0, size, null);
-        size = 0;
     }
 
     protected abstract int indexOf(String uuid);
