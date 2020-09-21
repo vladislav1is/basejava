@@ -1,6 +1,5 @@
 package com.redfox.webapp.storage;
 
-import com.redfox.webapp.exception.ExistStorageException;
 import com.redfox.webapp.model.Resume;
 
 import java.util.List;
@@ -13,29 +12,38 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void save(Resume resume) {
-        if (!storage.contains(resume)) {
-            storage.add(resume);
-            size++;
-        } else {
-            throw new ExistStorageException(resume.getUuid());
-        }
+    protected void addElement(Resume resume) {
+        storage.add(resume);
+        size++;
     }
 
     @Override
-    protected Resume getElementBy(int index) {
+    protected Resume getElementBy(String uuid) {
+        int index = indexOf(uuid);
         return storage.get(index);
     }
 
     @Override
-    protected void setElementBy(int index, Resume resume) {
+    protected void deleteElementBy(String uuid) {
+        int index = indexOf(uuid);
+        size--;
+        storage.remove(index);
+    }
+
+    @Override
+    protected void replaceElementBy(String uuid, Resume resume) {
+        int index = indexOf(uuid);
         storage.set(index, resume);
     }
 
     @Override
-    protected void deleteElementBy(int index) {
-        size--;
-        storage.remove(index);
+    protected Resume[] getAllElements() {
+        return storage.toArray(new Resume[size]);
+    }
+
+    @Override
+    protected void clearElements() {
+        storage.clear();
     }
 
     protected int indexOf(String uuid) {
@@ -46,15 +54,5 @@ public class ListStorage extends AbstractStorage {
             }
         }
         return -1;
-    }
-
-    @Override
-    protected void clearElements() {
-        storage.clear();
-    }
-
-    @Override
-    protected Resume[] getAllElements() {
-        return storage.toArray(new Resume[size]);
     }
 }

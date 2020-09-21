@@ -1,6 +1,5 @@
 package com.redfox.webapp.storage;
 
-import com.redfox.webapp.exception.ExistStorageException;
 import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
 
@@ -14,12 +13,11 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     Resume[] storage = new Resume[STORAGE_LIMIT];
 
-    public void save(Resume resume) {
+    @Override
+    protected void addElement(Resume resume) {
         String uuid = resume.getUuid();
         int index = indexOf(uuid);
-        if (index >= 0) {
-            throw new ExistStorageException(uuid);
-        } else if (size < storage.length) {
+        if (size < storage.length) {
             insertElement(resume, index);
             size++;
         } else {
@@ -28,19 +26,22 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume getElementBy(int index) {
+    protected Resume getElementBy(String uuid) {
+        int index = indexOf(uuid);
         return storage[index];
     }
 
     @Override
-    protected void deleteElementBy(int index) {
+    protected void deleteElementBy(String uuid) {
+        int index = indexOf(uuid);
         fillDeletedElement(index);
         size--;
         storage[size] = null;
     }
 
     @Override
-    protected void setElementBy(int index, Resume resume) {
+    protected void replaceElementBy(String uuid, Resume resume) {
+        int index = indexOf(uuid);
         storage[index] = resume;
     }
 

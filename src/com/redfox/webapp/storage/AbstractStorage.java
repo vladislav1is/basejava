@@ -1,5 +1,6 @@
 package com.redfox.webapp.storage;
 
+import com.redfox.webapp.exception.ExistStorageException;
 import com.redfox.webapp.exception.NotExistStorageException;
 import com.redfox.webapp.model.Resume;
 
@@ -7,36 +8,38 @@ public abstract class AbstractStorage implements Storage {
     int size;
 
     @Override
-    public abstract void save(Resume resume);
+    public void save(Resume resume) {
+        String uuid = resume.getUuid();
+        if (containsElementBy(uuid)) {
+            throw new ExistStorageException(uuid);
+        } else {
+            addElement(resume);
+        }
+    }
 
     @Override
     public Resume get(String uuid) {
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            return getElementBy(index);
+        if (!containsElementBy(uuid)) {
+            throw new NotExistStorageException(uuid);
         }
-        throw new NotExistStorageException(uuid);
+        return getElementBy(uuid);
     }
 
     @Override
     public void delete(String uuid) {
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            deleteElementBy(index);
-        } else {
+        if (!containsElementBy(uuid)) {
             throw new NotExistStorageException(uuid);
         }
+        deleteElementBy(uuid);
     }
 
     @Override
     public void update(Resume resume) {
         String uuid = resume.getUuid();
-        int index = indexOf(uuid);
-        if (index >= 0) {
-            setElementBy(index, resume);
-        } else {
+        if (!containsElementBy(uuid)) {
             throw new NotExistStorageException(uuid);
         }
+        replaceElementBy(uuid, resume);
     }
 
     /**
@@ -57,13 +60,20 @@ public abstract class AbstractStorage implements Storage {
         return size;
     }
 
+    private boolean containsElementBy(String uuid) {
+        int index = indexOf(uuid);
+        return (index >= 0) ? true : false;
+    }
+
+    protected abstract void addElement(Resume resume);
+
     protected abstract int indexOf(String uuid);
 
-    protected abstract Resume getElementBy(int index);
+    protected abstract Resume getElementBy(String uuid);
 
-    protected abstract void deleteElementBy(int index);
+    protected abstract void deleteElementBy(String uuid);
 
-    protected abstract void setElementBy(int index, Resume resume);
+    protected abstract void replaceElementBy(String uuid, Resume resume);
 
     protected abstract Resume[] getAllElements();
 
