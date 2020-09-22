@@ -5,40 +5,32 @@ import com.redfox.webapp.exception.NotExistStorageException;
 import com.redfox.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
-    int size;
 
     @Override
     public void save(Resume resume) {
         String uuid = resume.getUuid();
         if (containsElementBy(uuid)) {
             throw new ExistStorageException(uuid);
-        } else {
-            addElement(resume);
         }
+        addElement(resume);
     }
 
     @Override
     public Resume get(String uuid) {
-        if (!containsElementBy(uuid)) {
-            throw new NotExistStorageException(uuid);
-        }
+        notExistedUuid(uuid);
         return getElementBy(uuid);
     }
 
     @Override
     public void delete(String uuid) {
-        if (!containsElementBy(uuid)) {
-            throw new NotExistStorageException(uuid);
-        }
+        notExistedUuid(uuid);
         deleteElementBy(uuid);
     }
 
     @Override
     public void update(Resume resume) {
         String uuid = resume.getUuid();
-        if (!containsElementBy(uuid)) {
-            throw new NotExistStorageException(uuid);
-        }
+        notExistedUuid(uuid);
         replaceElementBy(uuid, resume);
     }
 
@@ -46,28 +38,17 @@ public abstract class AbstractStorage implements Storage {
      * @return array, contains only Resumes in storage (without null)
      */
     @Override
-    public Resume[] getAll() {
-        return getAllElements();
-    }
+    public abstract Resume[] getAll();
 
     @Override
-    public void clear() {
-        clearElements();
-        size = 0;
-    }
+    public abstract void clear();
 
-    public int size() {
-        return size;
-    }
+    @Override
+    public abstract int size();
 
-    private boolean containsElementBy(String uuid) {
-        int index = indexOf(uuid);
-        return (index >= 0) ? true : false;
-    }
+    protected abstract boolean containsElementBy(String uuid);
 
     protected abstract void addElement(Resume resume);
-
-    protected abstract int indexOf(String uuid);
 
     protected abstract Resume getElementBy(String uuid);
 
@@ -75,7 +56,9 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void replaceElementBy(String uuid, Resume resume);
 
-    protected abstract Resume[] getAllElements();
-
-    protected abstract void clearElements();
+    private void notExistedUuid(String uuid) {
+        if (!containsElementBy(uuid)) {
+            throw new NotExistStorageException(uuid);
+        }
+    }
 }

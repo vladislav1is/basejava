@@ -12,9 +12,28 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
+    public Resume[] getAll() {
+        return storage.toArray(new Resume[storage.size()]);
+    }
+
+    @Override
+    public void clear() {
+        storage.clear();
+    }
+
+    @Override
+    public int size() {
+        return storage.size();
+    }
+
+    @Override
+    protected boolean containsElementBy(String uuid) {
+        return indexOf(uuid) >= 0;
+    }
+
+    @Override
     protected void addElement(Resume resume) {
         storage.add(resume);
-        size++;
     }
 
     @Override
@@ -26,7 +45,6 @@ public class ListStorage extends AbstractStorage {
     @Override
     protected void deleteElementBy(String uuid) {
         int index = indexOf(uuid);
-        size--;
         storage.remove(index);
     }
 
@@ -36,17 +54,7 @@ public class ListStorage extends AbstractStorage {
         storage.set(index, resume);
     }
 
-    @Override
-    protected Resume[] getAllElements() {
-        return storage.toArray(new Resume[size]);
-    }
-
-    @Override
-    protected void clearElements() {
-        storage.clear();
-    }
-
-    protected int indexOf(String uuid) {
+    private int indexOf(String uuid) {
         int size = storage.size();
         for (int i = 0; i < size; i++) {
             if (storage.get(i).getUuid().equals(uuid)) {

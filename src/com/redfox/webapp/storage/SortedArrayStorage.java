@@ -16,15 +16,17 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    protected void insertElement(Resume resume, int index) {
+    protected void insertElement(Resume resume) {
 //      http://codereview.stackexchange.com/questions/36221/binary-search-for-inserting-in-array#answer-36239
+        int index = indexOf(resume.getUuid());
         index = Math.abs(index) - 1;
         System.arraycopy(storage, index, storage, index + 1, size - index);
         storage[index] = resume;
     }
 
     @Override
-    protected void fillDeletedElement(int index) {
+    protected void fillDeletedElement(String uuid) {
+        int index = indexOf(uuid);
         int numMoved = size - index - 1;
         if (numMoved >= 0) {
             System.arraycopy(storage, index + 1, storage, index, numMoved);
