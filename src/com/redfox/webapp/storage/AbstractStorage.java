@@ -9,29 +9,29 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public void save(Resume resume) {
         String uuid = resume.getUuid();
-        if (containsElementBy(uuid)) {
+        Object key = keyOf(uuid);
+        if (isExist(key)) {
             throw new ExistStorageException(uuid);
         }
-        addElement(resume);
+        addElement(key, resume);
     }
 
     @Override
     public Resume get(String uuid) {
-        notExistedUuid(uuid);
-        return getElementBy(uuid);
+        Object key = checkForExist(uuid);
+        return getElementBy(key);
     }
 
     @Override
     public void delete(String uuid) {
-        notExistedUuid(uuid);
-        deleteElementBy(uuid);
+        Object key = checkForExist(uuid);
+        deleteElementBy(key);
     }
 
     @Override
     public void update(Resume resume) {
-        String uuid = resume.getUuid();
-        notExistedUuid(uuid);
-        replaceElementBy(uuid, resume);
+        Object key = checkForExist(resume.getUuid());
+        updateElementBy(key, resume);
     }
 
     /**
@@ -46,19 +46,23 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public abstract int size();
 
-    protected abstract boolean containsElementBy(String uuid);
+    protected abstract Object keyOf(String uuid);
 
-    protected abstract void addElement(Resume resume);
+    protected abstract boolean isExist(Object key);
 
-    protected abstract Resume getElementBy(String uuid);
+    protected abstract void addElement(Object key, Resume resume);
 
-    protected abstract void deleteElementBy(String uuid);
+    protected abstract Resume getElementBy(Object key);
 
-    protected abstract void replaceElementBy(String uuid, Resume resume);
+    protected abstract void deleteElementBy(Object key);
 
-    private void notExistedUuid(String uuid) {
-        if (!containsElementBy(uuid)) {
+    protected abstract void updateElementBy(Object key, Resume resume);
+
+    private Object checkForExist(String uuid) {
+        Object key = keyOf(uuid);
+        if (!isExist(key)) {
             throw new NotExistStorageException(uuid);
         }
+        return key;
     }
 }

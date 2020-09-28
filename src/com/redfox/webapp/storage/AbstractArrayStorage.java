@@ -30,43 +30,39 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean containsElementBy(String uuid) {
-        return indexOf(uuid) >= 0;
+    protected boolean isExist(Object key) {
+        return (Integer) key >= 0;
     }
 
     @Override
-    protected void addElement(Resume resume) {
-        String uuid = resume.getUuid();
-        if (size < storage.length) {
-            insertElement(resume);
+    protected void addElement(Object key, Resume resume) {
+        if (size < STORAGE_LIMIT) {
+            insertElement((Integer) key, resume);
             size++;
         } else {
-            throw new StorageException("Storage overflow", uuid);
+            throw new StorageException("Storage overflow", resume.getUuid());
         }
     }
 
     @Override
-    protected Resume getElementBy(String uuid) {
-        int index = indexOf(uuid);
-        return storage[index];
+    protected Resume getElementBy(Object key) {
+        return storage[(Integer) key];
     }
 
     @Override
-    protected void deleteElementBy(String uuid) {
-        fillDeletedElement(uuid);
-        size--;
-        storage[size] = null;
+    protected void deleteElementBy(Object key) {
+        fillDeletedElement((Integer) key);
+        storage[--size] = null;
     }
 
     @Override
-    protected void replaceElementBy(String uuid, Resume resume) {
-        int index = indexOf(uuid);
-        storage[index] = resume;
+    protected void updateElementBy(Object key, Resume resume) {
+        storage[(Integer) key] = resume;
     }
 
-    protected abstract int indexOf(String uuid);
+    protected abstract Integer keyOf(String uuid);
 
-    protected abstract void insertElement(Resume resume);
+    protected abstract void insertElement(int index, Resume resume);
 
-    protected abstract void fillDeletedElement(String uuid);
+    protected abstract void fillDeletedElement(int index);
 }

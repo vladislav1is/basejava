@@ -11,8 +11,8 @@ import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
-public abstract class AbstractArrayStorageTest {
-    private Storage storage;
+public abstract class AbstractStorageTest {
+    private final Storage storage;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -31,7 +31,7 @@ public abstract class AbstractArrayStorageTest {
         RESUME_4 = new Resume(UUID_4);
     }
 
-    protected AbstractArrayStorageTest(Storage storage) {
+    protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
@@ -82,7 +82,12 @@ public abstract class AbstractArrayStorageTest {
         } catch (StorageException e) {
             Assert.fail("Exception not thrown");
         }
-        storage.save(new Resume("uuid10_001"));
+        String lastUuid = "uuid10_001";
+        storage.save(new Resume(lastUuid));
+        if (!(storage instanceof AbstractArrayStorage)) {
+            Class clazz = storage.getClass();
+            throw new StorageException(clazz.getSimpleName() + " can not be overflow", lastUuid);
+        }
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -111,8 +116,9 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void getAll() {
-        Resume[] resumes = new Resume[]{RESUME_1, RESUME_2, RESUME_3};
-        assertArrayEquals(resumes, storage.getAll());
+        assertEquals(RESUME_1, storage.get(UUID_1));
+        assertEquals(RESUME_2, storage.get(UUID_2));
+        assertEquals(RESUME_3, storage.get(UUID_3));
     }
 
     @Test
