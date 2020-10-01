@@ -2,17 +2,17 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.exception.ExistStorageException;
 import com.redfox.webapp.exception.NotExistStorageException;
-import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
-    private final Storage storage;
+    protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -31,7 +31,7 @@ public abstract class AbstractStorageTest {
         RESUME_4 = new Resume(UUID_4);
     }
 
-    protected AbstractStorageTest(Storage storage) {
+    public AbstractStorageTest(Storage storage) {
         this.storage = storage;
     }
 
@@ -72,23 +72,6 @@ public abstract class AbstractStorageTest {
         storage.save(RESUME_2);
     }
 
-    @Test(expected = StorageException.class)
-    public void saveOverFlow() {
-//      https://stackoverflow.com/questions/3869954/whats-the-actual-use-of-fail-in-junit-test-case
-        try {
-            for (int i = storage.size(); i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume("uuid" + (i + 1)));
-            }
-        } catch (StorageException e) {
-            Assert.fail("Exception not thrown");
-        }
-        String lastUuid = "uuid10_001";
-        storage.save(new Resume(lastUuid));
-        if (!(storage instanceof AbstractArrayStorage)) {
-            Class clazz = storage.getClass();
-            throw new StorageException(clazz.getSimpleName() + " can not be overflow", lastUuid);
-        }
-    }
 
     @Test(expected = NotExistStorageException.class)
     public void delete() {
@@ -116,9 +99,10 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAll() {
-        assertEquals(RESUME_1, storage.get(UUID_1));
-        assertEquals(RESUME_2, storage.get(UUID_2));
-        assertEquals(RESUME_3, storage.get(UUID_3));
+        Resume[] resumes = {RESUME_1, RESUME_2, RESUME_3};
+        Resume[] resumes1 = storage.getAll();
+        Arrays.sort(resumes1);
+        assertArrayEquals(resumes, resumes1);
     }
 
     @Test
