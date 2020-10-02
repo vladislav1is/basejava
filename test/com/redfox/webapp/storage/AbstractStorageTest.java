@@ -6,8 +6,6 @@ import com.redfox.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -101,8 +99,7 @@ public abstract class AbstractStorageTest {
     public void getAll() {
         Resume[] resumes = {RESUME_1, RESUME_2, RESUME_3};
         Resume[] resumes1 = storage.getAll();
-        Arrays.sort(resumes1);
-        assertArrayEquals(resumes, resumes1);
+        assertGetAll(resumes, resumes1);
     }
 
     @Test
@@ -119,4 +116,6 @@ public abstract class AbstractStorageTest {
     private void assertSize(int size) {
         assertEquals(size, storage.size());
     }
+
+    protected abstract void assertGetAll(Resume[] expected, Resume[] actual);
 }
