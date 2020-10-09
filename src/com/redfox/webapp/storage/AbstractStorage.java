@@ -8,30 +8,26 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        String uuid = resume.getUuid();
-        Object key = keyOf(uuid);
-        if (isExist(key)) {
-            throw new ExistStorageException(uuid);
-        }
-        addElement(key, resume);
+        Object searchKey = getNotExistedKey(resume.getUuid());
+        doSave(searchKey, resume);
     }
 
     @Override
     public Resume get(String uuid) {
-        Object key = checkForExist(uuid);
-        return getElementBy(key);
+        Object searchKey = getExistedKey(uuid);
+        return doGet(searchKey);
     }
 
     @Override
     public void delete(String uuid) {
-        Object key = checkForExist(uuid);
-        deleteElementBy(key);
+        Object searchKey = getExistedKey(uuid);
+        doDelete(searchKey);
     }
 
     @Override
     public void update(Resume resume) {
-        Object key = checkForExist(resume.getUuid());
-        updateElementBy(key, resume);
+        Object searchKey = getExistedKey(resume.getUuid());
+        doUpdate(searchKey, resume);
     }
 
     /**
@@ -46,23 +42,31 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public abstract int size();
 
-    protected abstract Object keyOf(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
-    protected abstract boolean isExist(Object key);
+    protected abstract boolean isExist(Object searchKey);
 
-    protected abstract void addElement(Object key, Resume resume);
+    protected abstract void doSave(Object searchKey, Resume resume);
 
-    protected abstract Resume getElementBy(Object key);
+    protected abstract Resume doGet(Object searchKey);
 
-    protected abstract void deleteElementBy(Object key);
+    protected abstract void doDelete(Object searchKey);
 
-    protected abstract void updateElementBy(Object key, Resume resume);
+    protected abstract void doUpdate(Object searchKey, Resume resume);
 
-    private Object checkForExist(String uuid) {
-        Object key = keyOf(uuid);
-        if (!isExist(key)) {
+    private Object getExistedKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) {
             throw new NotExistStorageException(uuid);
         }
-        return key;
+        return searchKey;
+    }
+
+    private Object getNotExistedKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (isExist(searchKey)) {
+            throw new ExistStorageException(uuid);
+        }
+        return searchKey;
     }
 }

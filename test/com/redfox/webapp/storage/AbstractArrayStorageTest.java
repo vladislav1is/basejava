@@ -5,8 +5,6 @@ import com.redfox.webapp.model.Resume;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-
 public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
 
     public AbstractArrayStorageTest(Storage storage) {
@@ -24,10 +22,5 @@ public abstract class AbstractArrayStorageTest extends AbstractStorageTest {
             Assert.fail("Exception not thrown");
         }
         storage.save(new Resume("uuid10_001"));
-    }
-
-    @Override
-    protected void assertGetAll(Resume[] expected, Resume[] actual) {
-        assertArrayEquals(expected, actual);
     }
 }

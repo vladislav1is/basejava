@@ -14,8 +14,10 @@ public class MapStorageTest extends AbstractStorageTest {
     }
 
     @Override
-    protected void assertGetAll(Resume[] expected, Resume[] actual) {
-        Arrays.sort(actual);
-        assertArrayEquals(expected, actual);
+    public void getAll() {
+        Resume[] expectedResumes = {RESUME_1, RESUME_2, RESUME_3};
+        Resume[] actualResumes = storage.getAll();
+        Arrays.sort(actualResumes, (o1, o2) -> o1.getUuid().compareTo(o2.getUuid()));
+        assertArrayEquals(expectedResumes, actualResumes);
     }
 }
