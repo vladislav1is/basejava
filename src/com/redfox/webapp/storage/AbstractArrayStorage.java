@@ -4,6 +4,7 @@ import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Array based storage for Resumes
@@ -15,8 +16,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     Resume[] storage = new Resume[STORAGE_LIMIT];
 
     @Override
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+    public List<Resume> getAllSorted() {
+        return Arrays.asList(Arrays.copyOf(storage, size));
     }
 
     @Override
@@ -62,6 +63,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     protected abstract Integer getSearchKey(String uuid);
+
+    protected abstract Integer getSearchKey(String uuid, String fullName);
 
     protected abstract void insertElement(int index, Resume resume);
 

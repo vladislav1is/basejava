@@ -1,24 +1,22 @@
 package com.redfox.webapp;
 
 import com.redfox.webapp.model.Resume;
-import com.redfox.webapp.storage.MapStorage;
+import com.redfox.webapp.storage.SortedArrayStorage;
 import com.redfox.webapp.storage.Storage;
-
-import java.util.HashMap;
 
 /**
  * Test for your com.urise.webapp.storage.ArrayStorage implementation
  */
 public class MainTestArrayStorage {
-    static final Storage ARRAY_STORAGE = new MapStorage(new HashMap<>());
+    static final Storage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
-        Resume r1 = new Resume("uuid1");
-        Resume r2 = new Resume("uuid2");
-        Resume r3 = new Resume("uuid3");
-        Resume r4 = new Resume("uuid4");
-        Resume r5 = new Resume("uuid5");
-        Resume r6 = new Resume("uuid6");
+        Resume r1 = new Resume("uuid1", "Nick");
+        Resume r2 = new Resume("uuid2", "John");
+        Resume r3 = new Resume("uuid3", "Ed");
+        Resume r4 = new Resume("uuid4", "John");
+        Resume r5 = new Resume("uuid5", "Bruce");
+        Resume r6 = new Resume("uuid6", "Fred");
 
         ARRAY_STORAGE.save(r1);
         ARRAY_STORAGE.save(r4);
@@ -30,7 +28,7 @@ public class MainTestArrayStorage {
         System.out.println("Get r1: " + ARRAY_STORAGE.get(r1.getUuid()));
         System.out.println("Size: " + ARRAY_STORAGE.size());
 
-        //System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
+//        System.out.println("Get dummy: " + ARRAY_STORAGE.get("dummy"));
 
         printAll();
         ARRAY_STORAGE.delete(r1.getUuid());
@@ -43,8 +41,8 @@ public class MainTestArrayStorage {
 
     static void printAll() {
         System.out.println("\nGet All");
-        for (Resume r : ARRAY_STORAGE.getAll()) {
-            System.out.println(r);
+        for (Resume r : ARRAY_STORAGE.getAllSorted()) {
+            System.out.println(r.getFullName());
         }
     }
 }

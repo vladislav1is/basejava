@@ -2,6 +2,8 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.model.Resume;
 
+import java.util.List;
+
 /**
  * Array based storage for Resumes
  */
@@ -16,11 +18,9 @@ public interface Storage {
     void update(Resume resume);
 
     /**
-     * @return array, contains only Resumes in storage (without null)
+     * @return List sorted by name, contains only Resumes in storage (without null)
      */
-    Resume[] getAll();
-    //return List sorted by name
-    //List<Resume> getAllSorted();
+    List<Resume> getAllSorted();
 
     void clear();
 

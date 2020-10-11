@@ -18,6 +18,11 @@ public class ArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
+    protected Integer getSearchKey(String fullName, String uuid) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     protected void insertElement(int index, Resume resume) {
         storage[size] = resume;
     }

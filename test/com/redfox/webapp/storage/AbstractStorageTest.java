@@ -6,6 +6,8 @@ import com.redfox.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -16,6 +18,11 @@ public abstract class AbstractStorageTest {
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
+
+    private static final String FULL_NAME_1 = "Bruce";
+    private static final String FULL_NAME_2 = "Ed";
+    private static final String FULL_NAME_3 = "John";
+    private static final String FULL_NAME_4 = "John";
 
     protected static final Resume RESUME_1;
     protected static final Resume RESUME_2;
@@ -96,17 +103,17 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void getAll() {
+    public void getAllSorted() {
         Resume[] expectedResumes = {RESUME_1, RESUME_2, RESUME_3};
-        Resume[] actualResumes = storage.getAll();
-        assertArrayEquals(expectedResumes, actualResumes);
+        List<Resume> actualResumes = storage.getAllSorted();
+        assertArrayEquals(expectedResumes, actualResumes.toArray());
     }
 
     @Test
     public void clear() {
         storage.clear();
         assertSize(0);
-        assertArrayEquals(new Resume[]{}, storage.getAll());
+        assertArrayEquals(new Resume[]{}, storage.getAllSorted().toArray());
     }
 
     private void assertGet(Resume resume) {

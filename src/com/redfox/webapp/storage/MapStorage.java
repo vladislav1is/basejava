@@ -2,6 +2,7 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.model.Resume;
 
+import java.util.List;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
@@ -11,9 +12,14 @@ public class MapStorage extends AbstractStorage {
         this.storage = storage;
     }
 
+//    @Override
+//    public Resume[] getAll() {
+//        return storage.values().toArray(new Resume[storage.size()]);
+//    }
+
     @Override
-    public Resume[] getAll() {
-        return storage.values().toArray(new Resume[storage.size()]);
+    public List<Resume> getAllSorted() {
+        return (List<Resume>) storage.values();
     }
 
     @Override
@@ -29,6 +35,11 @@ public class MapStorage extends AbstractStorage {
     @Override
     protected String getSearchKey(String uuid) {
         return uuid;
+    }
+
+    @Override
+    protected Object getSearchKey(String fullName, String uuid) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
