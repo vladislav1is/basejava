@@ -7,7 +7,6 @@ import com.redfox.webapp.model.Resume;
  */
 public class ArrayStorage extends AbstractArrayStorage {
 
-    @Override
     protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
@@ -17,17 +16,14 @@ public class ArrayStorage extends AbstractArrayStorage {
         return -1;
     }
 
-    @Override
     protected Integer getSearchKey(String fullName, String uuid) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
     protected void insertElement(int index, Resume resume) {
         storage[size] = resume;
     }
 
-    @Override
     protected void fillDeletedElement(int index) {
         storage[index] = storage[size];
     }

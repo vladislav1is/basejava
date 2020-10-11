@@ -10,18 +10,19 @@ import java.util.Comparator;
  */
 public class SortedArrayStorage extends AbstractArrayStorage {
 
-    private static final Comparator<Resume> RESUME_COMPARATOR_UUID = (o1, o2) -> o1.getUuid().compareTo(o2.getUuid());
-
     private static final Comparator<Resume> RESUME_COMPARATOR = (o1, o2) -> {
         int result = o1.getFullName().compareTo(o2.getFullName());
         if (result == 0) result = o1.getUuid().compareTo(o2.getUuid());
         return result;
     };
 
-    @Override
     protected Integer getSearchKey(String uuid) {
-        Resume searchKey = new Resume(uuid);
-        return Arrays.binarySearch(storage, 0, size, searchKey, RESUME_COMPARATOR_UUID);
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     protected Integer getSearchKey(String uuid, String fullName) {
@@ -29,7 +30,6 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         return Arrays.binarySearch(storage, 0, size, searchKey, RESUME_COMPARATOR);
     }
 
-    @Override
     protected void insertElement(int index, Resume resume) {
 //      http://codereview.stackexchange.com/questions/36221/binary-search-for-inserting-in-array#answer-36239
         index = Math.abs(index) - 1;
@@ -37,7 +37,6 @@ public class SortedArrayStorage extends AbstractArrayStorage {
         storage[index] = resume;
     }
 
-    @Override
     protected void fillDeletedElement(int index) {
         int numMoved = size - index - 1;
         if (numMoved >= 0) {

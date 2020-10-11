@@ -8,25 +8,21 @@ import java.util.List;
 
 public abstract class AbstractStorage implements Storage {
 
-    @Override
     public void save(Resume resume) {
         Object searchKey = getNotExistedKey(resume.getUuid(), resume.getFullName());
         doSave(searchKey, resume);
     }
 
-    @Override
     public Resume get(String uuid) {
         Object searchKey = getExistedKey(uuid);
         return doGet(searchKey);
     }
 
-    @Override
     public void delete(String uuid) {
         Object searchKey = getExistedKey(uuid);
         doDelete(searchKey);
     }
 
-    @Override
     public void update(Resume resume) {
         Object searchKey = getExistedKey(resume.getUuid(), resume.getFullName());
         doUpdate(searchKey, resume);

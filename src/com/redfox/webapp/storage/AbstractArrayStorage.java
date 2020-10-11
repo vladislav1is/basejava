@@ -15,12 +15,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     Resume[] storage = new Resume[STORAGE_LIMIT];
 
-    @Override
     public List<Resume> getAllSorted() {
         return Arrays.asList(Arrays.copyOf(storage, size));
     }
 
-    @Override
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
@@ -30,12 +28,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return size;
     }
 
-    @Override
     protected boolean isExist(Object key) {
         return (Integer) key >= 0;
     }
 
-    @Override
     protected void doSave(Object key, Resume resume) {
         if (size < STORAGE_LIMIT) {
             insertElement((Integer) key, resume);
@@ -45,19 +41,16 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         }
     }
 
-    @Override
     protected Resume doGet(Object key) {
         return storage[(Integer) key];
     }
 
-    @Override
     protected void doDelete(Object key) {
         fillDeletedElement((Integer) key);
         storage[size - 1] = null;
         size--;
     }
 
-    @Override
     protected void doUpdate(Object key, Resume resume) {
         storage[(Integer) key] = resume;
     }
