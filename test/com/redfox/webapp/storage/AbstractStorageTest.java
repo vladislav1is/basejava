@@ -6,6 +6,8 @@ import com.redfox.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -19,21 +21,16 @@ public abstract class AbstractStorageTest {
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
-    private static final String FULL_NAME_1 = "Bruce";
-    private static final String FULL_NAME_2 = "Ed";
-    private static final String FULL_NAME_3 = "John";
-    private static final String FULL_NAME_4 = "John";
-
     protected static final Resume RESUME_1;
     protected static final Resume RESUME_2;
     protected static final Resume RESUME_3;
     protected static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1);
-        RESUME_2 = new Resume(UUID_2);
-        RESUME_3 = new Resume(UUID_3);
-        RESUME_4 = new Resume(UUID_4);
+        RESUME_1 = new Resume(UUID_1, "Bruce");
+        RESUME_2 = new Resume(UUID_2, "Ed");
+        RESUME_3 = new Resume(UUID_3, "John");
+        RESUME_4 = new Resume(UUID_4, "John");
     }
 
     public AbstractStorageTest(Storage storage) {
@@ -104,9 +101,16 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() {
-        Resume[] expectedResumes = {RESUME_1, RESUME_2, RESUME_3};
+        List<Resume> expectedResumes = new ArrayList<>(3);
+        expectedResumes.add(RESUME_1);
+        expectedResumes.add(RESUME_2);
+        expectedResumes.add(RESUME_3);
+
         List<Resume> actualResumes = storage.getAllSorted();
-        assertArrayEquals(expectedResumes, actualResumes.toArray());
+        Iterator<Resume> actualResumesIterator = actualResumes.iterator();
+        for (Resume expectedResume : expectedResumes) {
+            assertEquals(expectedResume, actualResumesIterator.next());
+        }
     }
 
     @Test

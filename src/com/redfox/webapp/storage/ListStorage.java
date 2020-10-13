@@ -12,8 +12,8 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public List<Resume> getAllSorted() {
-        return storage.subList(0, size());
+    protected Resume[] getAll() {
+        return storage.toArray(new Resume[storage.size()]);
     }
 
     @Override
@@ -35,11 +35,6 @@ public class ListStorage extends AbstractStorage {
             }
         }
         return -1;
-    }
-
-    @Override
-    protected Object getSearchKey(String fullName, String uuid) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
