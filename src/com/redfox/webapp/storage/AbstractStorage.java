@@ -36,23 +36,9 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         List<Resume> resumeList = Arrays.asList(getAll());
-        Collections.sort(resumeList, (o1, o2) -> {
-            int result = o1.getFullName().compareTo(o2.getFullName());
-            if (result == 0) result = o1.getUuid().compareTo(o2.getUuid());
-            return result;
-        });
+        Collections.sort(resumeList, Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid));
         return resumeList;
     }
-
-    @Override
-    public abstract void clear();
-
-    @Override
-    public abstract int size();
-
-    protected abstract Object getSearchKey(String uuid);
-
-    protected abstract boolean isExist(Object searchKey);
 
     private Object getExistedKey(String uuid) {
         Object searchKey = getSearchKey(uuid);
@@ -69,6 +55,10 @@ public abstract class AbstractStorage implements Storage {
         }
         return searchKey;
     }
+
+    protected abstract Object getSearchKey(String uuid);
+
+    protected abstract boolean isExist(Object searchKey);
 
     protected abstract void doSave(Object searchKey, Resume resume);
 

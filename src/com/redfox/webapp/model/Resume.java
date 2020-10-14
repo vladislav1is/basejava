@@ -12,13 +12,10 @@ public class Resume {
     private final String uuid;
     private String fullName;
 
-    public Resume() {
-        this(UUID.randomUUID().toString());
-    }
-
-    public Resume(String uuid) {
-        Objects.requireNonNull(uuid, "uuid must not be null");
-        this.uuid = uuid;
+    public Resume(String fullName) {
+        Objects.requireNonNull(fullName, "uuid must not be null");
+        this.fullName = fullName;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public Resume(String uuid, String fullName) {

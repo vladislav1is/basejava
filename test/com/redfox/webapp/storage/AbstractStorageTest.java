@@ -6,8 +6,7 @@ import com.redfox.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -89,7 +88,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume newResume = new Resume(UUID_2);
+        Resume newResume = new Resume(UUID_2, "Ed");
         storage.update(newResume);
         assertGet(newResume);
     }
@@ -101,16 +100,9 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void getAllSorted() {
-        List<Resume> expectedResumes = new ArrayList<>(3);
-        expectedResumes.add(RESUME_1);
-        expectedResumes.add(RESUME_2);
-        expectedResumes.add(RESUME_3);
-
+        List<Resume> expectedResumes = Arrays.asList(RESUME_1, RESUME_2, RESUME_3);
         List<Resume> actualResumes = storage.getAllSorted();
-        Iterator<Resume> actualResumesIterator = actualResumes.iterator();
-        for (Resume expectedResume : expectedResumes) {
-            assertEquals(expectedResume, actualResumesIterator.next());
-        }
+        assertArrayEquals(expectedResumes.toArray(), actualResumes.toArray());
     }
 
     @Test
