@@ -13,9 +13,8 @@ public class Resume {
     private String fullName;
 
     public Resume(String fullName) {
+        this(UUID.randomUUID().toString(), fullName);
         Objects.requireNonNull(fullName, "uuid must not be null");
-        this.fullName = fullName;
-        this.uuid = UUID.randomUUID().toString();
     }
 
     public Resume(String uuid, String fullName) {
