@@ -35,7 +35,7 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        List<Resume> resumeList = Arrays.asList(getAll());
+        List<Resume> resumeList = doCopyAll();
         Collections.sort(resumeList, Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid));
         return resumeList;
     }
@@ -71,5 +71,5 @@ public abstract class AbstractStorage implements Storage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    protected abstract Resume[] getAll();
+    protected abstract List<Resume> doCopyAll();
 }

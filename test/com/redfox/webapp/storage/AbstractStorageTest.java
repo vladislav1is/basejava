@@ -13,7 +13,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
-    final Storage storage;
+    protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -26,10 +26,10 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1, "Bruce");
-        RESUME_2 = new Resume(UUID_2, "Ed");
-        RESUME_3 = new Resume(UUID_3, "John");
-        RESUME_4 = new Resume(UUID_4, "John");
+        RESUME_1 = new Resume(UUID_1, "Name1");
+        RESUME_2 = new Resume(UUID_2, "Name2");
+        RESUME_3 = new Resume(UUID_3, "Name3");
+        RESUME_4 = new Resume(UUID_4, "Name4");
     }
 
     public AbstractStorageTest(Storage storage) {
@@ -88,7 +88,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume newResume = new Resume(UUID_2, "Ed");
+        Resume newResume = new Resume(UUID_2, "NewName");
         storage.update(newResume);
         assertGet(newResume);
     }

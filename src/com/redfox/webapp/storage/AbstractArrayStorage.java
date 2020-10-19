@@ -4,6 +4,7 @@ import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Array based storage for Resumes
@@ -13,11 +14,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     int size;
 
     Resume[] storage = new Resume[STORAGE_LIMIT];
-
-    @Override
-    protected Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
-    }
 
     @Override
     public void clear() {
@@ -31,14 +27,14 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object key) {
-        return (Integer) key >= 0;
+    protected boolean isExist(Object searchKey) {
+        return (Integer) searchKey >= 0;
     }
 
     @Override
-    protected void doSave(Object key, Resume resume) {
+    protected void doSave(Object searchKey, Resume resume) {
         if (size < STORAGE_LIMIT) {
-            insertElement((Integer) key, resume);
+            insertElement((Integer) searchKey, resume);
             size++;
         } else {
             throw new StorageException("Storage overflow", resume.getUuid());
@@ -46,20 +42,25 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected Resume doGet(Object key) {
-        return storage[(Integer) key];
+    protected Resume doGet(Object searchKey) {
+        return storage[(Integer) searchKey];
     }
 
     @Override
-    protected void doDelete(Object key) {
-        fillDeletedElement((Integer) key);
+    protected void doDelete(Object searchKey) {
+        fillDeletedElement((Integer) searchKey);
         storage[size - 1] = null;
         size--;
     }
 
     @Override
-    protected void doUpdate(Object key, Resume resume) {
-        storage[(Integer) key] = resume;
+    protected void doUpdate(Object searchKey, Resume resume) {
+        storage[(Integer) searchKey] = resume;
+    }
+
+    @Override
+    protected List<Resume> doCopyAll() {
+        return Arrays.asList(Arrays.copyOf(storage, size));
     }
 
     protected abstract void insertElement(int index, Resume resume);

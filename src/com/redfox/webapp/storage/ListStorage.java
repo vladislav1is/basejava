@@ -2,6 +2,7 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.model.Resume;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
@@ -9,11 +10,6 @@ public class ListStorage extends AbstractStorage {
 
     public ListStorage(List<Resume> list) {
         this.storage = list;
-    }
-
-    @Override
-    protected Resume[] getAll() {
-        return storage.toArray(new Resume[storage.size()]);
     }
 
     @Override
@@ -38,28 +34,33 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected boolean isExist(Object key) {
-        return (Integer) key >= 0;
+    protected boolean isExist(Object searchKey) {
+        return (Integer) searchKey >= 0;
     }
 
     @Override
-    protected void doSave(Object key, Resume resume) {
+    protected void doSave(Object searchKey, Resume resume) {
         storage.add(resume);
     }
 
     @Override
-    protected Resume doGet(Object key) {
-        return storage.get((Integer) key);
+    protected Resume doGet(Object searchKey) {
+        return storage.get((Integer) searchKey);
     }
 
     @Override
-    protected void doDelete(Object key) {
-        int index = (Integer) key;
+    protected void doDelete(Object searchKey) {
+        int index = (Integer) searchKey;
         storage.remove(index);
     }
 
     @Override
-    protected void doUpdate(Object key, Resume resume) {
-        storage.set((Integer) key, resume);
+    protected void doUpdate(Object searchKey, Resume resume) {
+        storage.set((Integer) searchKey, resume);
+    }
+
+    @Override
+    protected List<Resume> doCopyAll() {
+        return new ArrayList<>(storage);
     }
 }
