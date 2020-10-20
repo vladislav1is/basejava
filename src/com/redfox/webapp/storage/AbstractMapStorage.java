@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractMapStorage extends AbstractStorage {
+public abstract class AbstractMapStorage<SK> extends AbstractStorage<SK> {
+
     protected final Map<String, Resume> storage;
 
     protected AbstractMapStorage(Map<String, Resume> storage) {

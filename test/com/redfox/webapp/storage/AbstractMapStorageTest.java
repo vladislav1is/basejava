@@ -2,9 +2,9 @@ package com.redfox.webapp.storage;
 
 import static org.junit.Assert.*;
 
-public class AbstractMapStorageTest extends AbstractStorageTest{
+public abstract class AbstractMapStorageTest extends AbstractStorageTest {
 
-    public AbstractMapStorageTest(Storage storage) {
+    protected AbstractMapStorageTest(Storage storage) {
         super(storage);
     }
 }

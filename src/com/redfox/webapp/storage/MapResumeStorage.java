@@ -4,7 +4,7 @@ import com.redfox.webapp.model.Resume;
 
 import java.util.Map;
 
-public class MapResumeStorage extends AbstractMapStorage {
+public class MapResumeStorage extends AbstractMapStorage<Resume> {
 
     public MapResumeStorage(Map<String, Resume> storage) {
         super(storage);
@@ -15,29 +15,28 @@ public class MapResumeStorage extends AbstractMapStorage {
         return storage.get(uuid);
     }
 
-
     @Override
-    protected boolean isExist(Object searchKey) {
+    protected boolean isExist(Resume searchKey) {
         return searchKey != null;
     }
 
     @Override
-    protected void doSave(Object searchKey, Resume resume) {
+    protected void doSave(Resume searchKey, Resume resume) {
         storage.put(resume.getUuid(), resume);
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        return (Resume) searchKey;
+    protected Resume doGet(Resume searchKey) {
+        return searchKey;
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        storage.remove(((Resume) searchKey).getUuid());
+    protected void doDelete(Resume searchKey) {
+        storage.remove(searchKey.getUuid());
     }
 
     @Override
-    protected void doUpdate(Object searchKey, Resume resume) {
+    protected void doUpdate(Resume searchKey, Resume resume) {
         storage.replace(resume.getUuid(), resume);
     }
 }
