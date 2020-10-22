@@ -1,7 +1,7 @@
 package com.redfox.webapp.model;
 
-public class TextHeaderContent extends TextContent {
-    public TextHeaderContent(String str) {
+public class BoldTextContent extends TextContent {
+    public BoldTextContent(String str) {
         super(str);
     }
 

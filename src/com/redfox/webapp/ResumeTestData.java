@@ -4,63 +4,60 @@ import com.redfox.webapp.model.*;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        List<String> contacts = Arrays.asList("foxfish@mail.ru", "+7(926) 495-0482");
-        List<SectionType> sections = getSections();
+        Map<ContactType, String> contacts = new HashMap<>();
+        contacts.put(ContactType.PHONE, "telNumber");
+        contacts.put(ContactType.SKYPE, "skypeName");
+        contacts.put(ContactType.MAIL, "mailName");
+
+        Map<SectionType, Content> sections = new HashMap<>();
+        sections.put(SectionType.PERSONAL, new TextContent("text"));
+
+        sections.put(SectionType.OBJECTIVE, new BoldTextContent("boldText"));
+
+        sections.put(SectionType.ACHIEVEMENT, new ListTextContent(Arrays.asList(
+                new TextContent("text"),
+                new TextContent("text")
+        )));
+
+        sections.put(SectionType.QUALIFICATIONS, new ListTextContent(Arrays.asList(
+                new TextContent("text"),
+                new TextContent("text")
+        )));
+
+        HashMap<TextContent, ListTextContent> experienceContent = new HashMap<>();
+        experienceContent.put(new HeaderTextContent("headerText1"), new ListTextContent(Arrays.asList(
+                new TextDateContent("dateText"),
+                new BoldTextContent("boldText"),
+                new TextContent("text")
+        )));
+        experienceContent.put(new HeaderTextContent("headerText2"), new ListTextContent(Arrays.asList(
+                new TextDateContent("dateText"),
+                new BoldTextContent("boldText"),
+                new TextContent("text")
+        )));
+        sections.put(SectionType.EXPERIENCE, new MapTextContent(experienceContent));
+
+        HashMap<TextContent, ListTextContent> educationContent = new HashMap<>();
+        educationContent.put(new HeaderTextContent("headerText1"), new ListTextContent(Arrays.asList(
+                new TextDateContent("dateText"), new BoldTextContent("boldText"),
+                new TextDateContent("dateText"), new BoldTextContent("boldText")
+        )));
+        sections.put(SectionType.EDUCATION, new MapTextContent(educationContent));
+
         Resume resume = new Resume("Boris", contacts, sections);
 
-        resume.getFullName();
-        for (String contact : resume.getContacts()) {
-            System.out.println(contact);
+        System.out.println(resume.getFullName() + "\n");
+        for (Map.Entry<ContactType, String> contact : resume.getContacts().entrySet()) {
+            System.out.println(contact.getKey().getTitle() + " : " + contact.getValue());
         }
-        for (SectionType sectionType : resume.getSections()) {
-            SectionType tmp = sectionType;
-            System.out.println(tmp.getTitle() + "\n" + tmp.getSection().getText());
+        System.out.println();
+        for (Map.Entry<SectionType, Content> section : resume.getSections().entrySet()) {
+            System.out.println(section.getKey().getTitle());
+            System.out.println(section.getValue().getText());
         }
-    }
-
-    public static List<SectionType> getSections() {
-        SectionType personal = SectionType.PERSONAL;
-        personal.setContent(new TextContent("text"));
-
-        SectionType objective = SectionType.OBJECTIVE;
-        objective.setContent(new TextBoldContent("boldText"));
-
-        SectionType achievement = SectionType.ACHIEVEMENT;
-        achievement.setContent(new ListTextContent(Arrays.asList(
-                new TextContent("text"),
-                new TextContent("text")
-        )));
-        SectionType qualifications = SectionType.QUALIFICATIONS;
-        qualifications.setContent(new ListTextContent(Arrays.asList(
-                new TextContent("text"),
-                new TextContent("text")
-        )));
-        SectionType experience = SectionType.EXPERIENCE;
-        HashMap<TextContent, ListTextContent> experienceContent = new HashMap<>();
-        experienceContent.put(new TextHeaderContent("headerText1"), new ListTextContent(Arrays.asList(
-                new TextDateContent("dateText"),
-                new TextBoldContent("boldText"),
-                new TextContent("text")
-        )));
-        experienceContent.put(new TextHeaderContent("headerText2"), new ListTextContent(Arrays.asList(
-                new TextDateContent("dateText"),
-                new TextBoldContent("boldText"),
-                new TextContent("text")
-        )));
-        experience.setContent(new MapTextContent(experienceContent));
-
-        SectionType education = SectionType.EDUCATION;
-        HashMap<TextContent, ListTextContent> educationContent = new HashMap<>();
-        educationContent.put(new TextHeaderContent("headerText1"), new ListTextContent(Arrays.asList(
-                new TextDateContent("dateText"), new TextBoldContent("boldText"),
-                new TextDateContent("dateText"), new TextBoldContent("boldText")
-        )));
-        education.setContent(new MapTextContent(educationContent));
-
-        return Arrays.asList(personal, objective, achievement, qualifications, experience, education);
     }
 }
