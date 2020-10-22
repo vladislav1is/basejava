@@ -1,5 +1,6 @@
 package com.redfox.webapp.model;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -13,6 +14,9 @@ public class Resume implements Comparable<Resume> {
 
     private final String fullName;
 
+    private List<String> contacts;
+    private List<SectionType> sections;
+
     public Resume(String fullName) {
         this(UUID.randomUUID().toString(), fullName);
     }
@@ -24,12 +28,26 @@ public class Resume implements Comparable<Resume> {
         this.fullName = fullName;
     }
 
-    public String getFullName() {
-        return fullName;
+    public Resume(String fullName, List<String> contacts, List<SectionType> sections) {
+        this(fullName);
+        this.contacts = contacts;
+        this.sections = sections;
     }
 
     public String getUuid() {
         return uuid;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public List<String> getContacts() {
+        return contacts;
+    }
+
+    public List<SectionType> getSections() {
+        return sections;
     }
 
     @Override
