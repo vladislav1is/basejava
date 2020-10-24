@@ -1,12 +1,15 @@
 package com.redfox.webapp.model;
 
 public class BoldTextContent extends TextContent {
-    public BoldTextContent(String str) {
-        super(str);
+    private final String boldText;
+
+    public BoldTextContent(String text) {
+        super(text);
+        this.boldText = text;
     }
 
-    @Override
-    public String getText() {
-        return super.getText();
+    public BoldTextContent(String text, String boldText) {
+        super(text);
+        this.boldText = boldText;
     }
 }

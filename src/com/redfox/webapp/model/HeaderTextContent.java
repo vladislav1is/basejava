@@ -1,12 +1,13 @@
 package com.redfox.webapp.model;
 
-public class HeaderTextContent extends TextContent {
-    public HeaderTextContent(String str) {
-        super(str);
-    }
+import java.util.List;
 
-    @Override
-    public String getText() {
-        return super.getText();
+public class HeaderTextContent implements Content {
+    private final String header;
+    private final List<Content> texts;
+
+    public HeaderTextContent(String header, List<Content> texts) {
+        this.header = header;
+        this.texts = texts;
     }
 }

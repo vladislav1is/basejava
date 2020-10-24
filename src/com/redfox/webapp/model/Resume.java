@@ -1,5 +1,6 @@
 package com.redfox.webapp.model;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,12 +14,8 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
 
     private final String fullName;
-    private Map<ContactType, String> contacts;
-    private Map<SectionType, Content> sections;
-
-    public Resume(String fullName) {
-        this(UUID.randomUUID().toString(), fullName);
-    }
+    private Map<String, String> contacts;
+    private Map<SectionType, List<Content>> sections;
 
     public Resume(String uuid, String fullName) {
         Objects.requireNonNull(fullName, "fullName must not be null");
@@ -27,7 +24,11 @@ public class Resume implements Comparable<Resume> {
         this.fullName = fullName;
     }
 
-    public Resume(String fullName, Map<ContactType, String> contacts, Map<SectionType, Content> sections) {
+    public Resume(String fullName) {
+        this(UUID.randomUUID().toString(), fullName);
+    }
+
+    public Resume(String fullName, Map<String, String> contacts, Map<SectionType, List<Content>> sections) {
         this(fullName);
         this.contacts = contacts;
         this.sections = sections;
@@ -41,11 +42,11 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public Map<ContactType, String> getContacts() {
+    public Map<String, String> getContacts() {
         return contacts;
     }
 
-    public Map<SectionType, Content> getSections() {
+    public Map<SectionType, List<Content>> getSections() {
         return sections;
     }
 
