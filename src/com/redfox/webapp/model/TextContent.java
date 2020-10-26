@@ -1,14 +1,17 @@
 package com.redfox.webapp.model;
 
-public class TextContent implements Content {
-    private final String content;
+import java.util.Objects;
 
-    public TextContent(String content) {
-        this.content = content;
+public class TextContent implements Content {
+    private final String text;
+
+    public TextContent(String text) {
+        Objects.requireNonNull(text, "text must not be null");
+        this.text = text;
     }
 
     @Override
     public String toString() {
-        return content;
+        return text;
     }
 }
