@@ -1,6 +1,6 @@
 package com.redfox.webapp.model;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -14,8 +14,8 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
 
     private final String fullName;
-    private Map<String, String> contacts;
-    private Map<SectionType, List<Content>> sections;
+    private final Map<ContactType, String> contacts = new HashMap<>();
+    private final Map<SectionType, Content> sections = new HashMap<>();
 
     public Resume(String uuid, String fullName) {
         Objects.requireNonNull(fullName, "fullName must not be null");
@@ -28,12 +28,6 @@ public class Resume implements Comparable<Resume> {
         this(UUID.randomUUID().toString(), fullName);
     }
 
-    public Resume(String fullName, Map<String, String> contacts, Map<SectionType, List<Content>> sections) {
-        this(fullName);
-        this.contacts = contacts;
-        this.sections = sections;
-    }
-
     public String getUuid() {
         return uuid;
     }
@@ -42,12 +36,25 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public Map<String, String> getContacts() {
+    public Map<ContactType, String> getContacts() {
         return contacts;
     }
 
-    public Map<SectionType, List<Content>> getSections() {
+    public Map<SectionType, Content> getSections() {
         return sections;
+    }
+
+    public String getContact(ContactType type) {
+        return contacts.get(type);
+    }
+
+    public Content getSection(SectionType type) {
+        return sections.get(type);
+    }
+
+    @Override
+    public String toString() {
+        return uuid + '(' + fullName + ')';
     }
 
     @Override
@@ -66,11 +73,6 @@ public class Resume implements Comparable<Resume> {
         int result = uuid.hashCode();
         result = 31 * result + fullName.hashCode();
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return uuid + '(' + fullName + ')';
     }
 
     @Override

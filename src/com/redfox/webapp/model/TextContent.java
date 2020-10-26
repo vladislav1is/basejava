@@ -1,9 +1,14 @@
 package com.redfox.webapp.model;
 
 public class TextContent implements Content {
-    protected final String text;
+    private final String content;
 
-    public TextContent(String text) {
-        this.text = text;
+    public TextContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return content;
     }
 }

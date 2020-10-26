@@ -2,58 +2,54 @@ package com.redfox.webapp;
 
 import com.redfox.webapp.model.*;
 
+import java.time.YearMonth;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ResumeTestData {
+    private static final Resume resume = new Resume("Boris");
+
     public static void main(String[] args) {
-        // вход. данные: название, логин
-        Map<String, String> contacts = new HashMap<>();
-        contacts.put("phone", "telNumber");
-        contacts.put("skype", "skypeName");
-        contacts.put("mail", "mailName");
+        Map<SectionType, Content> resumeSections = resume.getSections();
+        Map<ContactType, String> resumeContacts = resume.getContacts();
 
-        // входные данные
-        Map<SectionType, List<Content>> sections = new HashMap<>();
-        sections.put(SectionType.PERSONAL, Arrays.asList(new TextContent("text")));
+        resumeContacts.put(ContactType.PHONE, "number");
+        resumeContacts.put(ContactType.SKYPE, "skype_profile");
+        resumeContacts.put(ContactType.MAIL, "mail_profile");
+        resumeContacts.put(ContactType.LINCKEDIN, "linckedin_profile");
+        resumeContacts.put(ContactType.GITHUB, "github_profile");
+        resumeContacts.put(ContactType.STACKOVERFLOW, "github_profile");
+        resumeContacts.put(ContactType.HOMEPAGE, "homepage");
 
-        sections.put(SectionType.OBJECTIVE, Arrays.asList(new TextContent("text")));
+        resumeSections.put(SectionType.OBJECTIVE, new TextContent("text"));
+        resumeSections.put(SectionType.PERSONAL, new TextContent("text"));
+        resumeSections.put(SectionType.ACHIEVEMENT, new ListTextContent(Arrays.asList("text1", "text2", "tex3")));
+        resumeSections.put(SectionType.QUALIFICATIONS, new ListTextContent(Arrays.asList("text1", "text2", "tex3")));
 
-        sections.put(SectionType.ACHIEVEMENT, Arrays.asList(
-                new TextContent("text"),
-                new TextContent("text")
-        ));
+        String dateMonth = "7";
+        String dateYear = "1914";
+        YearMonth startDate = YearMonth.of(Integer.valueOf(dateYear), Integer.valueOf(dateMonth));
+        YearMonth endDate = YearMonth.of(Integer.valueOf(dateYear), Integer.valueOf(dateMonth));
+        resumeSections.put(SectionType.EXPERIENCE, new ListCompanyContent(Arrays.asList(
+                new Company("name1", startDate, endDate, "header1", "desc1"),
+                new Company("name2", startDate, endDate, "header2", "desc2")
+        )));
+        resumeSections.put(SectionType.EDUCATION, new ListCompanyContent(Arrays.asList(
+                new Company("name1", startDate, endDate, "header2")
+//                new CompanyTest("name", Arrays.asList(startDate, startDate), Arrays.asList(endDate, endDate), Arrays.asList("header1", "header2"))
+        )));
+        printAll();
+    }
 
-        sections.put(SectionType.QUALIFICATIONS, Arrays.asList(
-                new TextContent("text"),
-                new TextContent("text")
-        ));
-
-        sections.put(SectionType.EXPERIENCE, Arrays.asList(
-                new HeaderTextContent("header1", Arrays.asList(new DateTextContent(
-                        new BoldTextContent("text", "boldText"), "1914 7"))),
-                new HeaderTextContent("header2", Arrays.asList(new DateTextContent(
-                        new BoldTextContent("text", "boldText"), "1914 7")))
-        ));
-
-        sections.put(SectionType.EDUCATION, Arrays.asList(
-                new HeaderTextContent("header1", Arrays.asList(
-                        new DateTextContent(new BoldTextContent("boldText"), "1914 7"),
-                        new DateTextContent(new BoldTextContent("boldText"), "1914 7")
-                ))
-        ));
-
-        Resume resume = new Resume("Boris", contacts, sections);
-
-        System.out.println(resume.getFullName() + "\n");
-        for (Map.Entry<String, String> contact : resume.getContacts().entrySet()) {
-            System.out.println(contact.getKey() + " : " + contact.getValue());
+    static void printAll() {
+        System.out.println(resume.getFullName());
+        System.out.println();
+        for (Map.Entry contact : resume.getContacts().entrySet()) {
+            System.out.println(contact.getKey() + " " + contact.getValue());
         }
         System.out.println();
-        for (Map.Entry<SectionType, List<Content>> section : resume.getSections().entrySet()) {
-//            TODO:....
+        for (Map.Entry section : resume.getSections().entrySet()) {
+            System.out.println(section.getKey() + ":" + section.getValue());
         }
     }
 }
