@@ -1,9 +1,6 @@
 package com.redfox.webapp.model;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Initial resume class
@@ -14,8 +11,8 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
 
     private final String fullName;
-    private final Map<ContactType, String> contacts = new HashMap<>();
-    private final Map<SectionType, Content> sections = new HashMap<>();
+    private final Map<ContactType, Link> contacts = new EnumMap<>(ContactType.class);
+    private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String uuid, String fullName) {
         Objects.requireNonNull(fullName, "fullName must not be null");
@@ -36,19 +33,19 @@ public class Resume implements Comparable<Resume> {
         return fullName;
     }
 
-    public Map<ContactType, String> getContacts() {
+    public Map<ContactType, Link> getContacts() {
         return contacts;
     }
 
-    public Map<SectionType, Content> getSections() {
+    public Map<SectionType, Section> getSections() {
         return sections;
     }
 
-    public String getContact(ContactType type) {
+    public Link getContact(ContactType type) {
         return contacts.get(type);
     }
 
-    public Content getSection(SectionType type) {
+    public Section getSection(SectionType type) {
         return sections.get(type);
     }
 

@@ -9,6 +9,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.redfox.webapp.ResumeTestData.constructResume;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -26,10 +27,10 @@ public abstract class AbstractStorageTest {
     protected static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1, "Name1");
-        RESUME_2 = new Resume(UUID_2, "Name2");
-        RESUME_3 = new Resume(UUID_3, "Name3");
-        RESUME_4 = new Resume(UUID_4, "Name4");
+        RESUME_1 = constructResume(UUID_1, "Name1");
+        RESUME_2 = constructResume(UUID_2, "Name2");
+        RESUME_3 = constructResume(UUID_3, "Name3");
+        RESUME_4 = constructResume(UUID_4, "Name4");
     }
 
     public AbstractStorageTest(Storage storage) {
@@ -88,7 +89,7 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() {
-        Resume newResume = new Resume(UUID_2, "NewName");
+        Resume newResume = constructResume(UUID_2, "NewName");
         storage.update(newResume);
         assertGet(newResume);
     }
