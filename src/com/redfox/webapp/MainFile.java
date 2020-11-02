@@ -32,19 +32,22 @@ public class MainFile {
 //      TODO: Сделать рекурсивный обход и вывод имени файлов в каталогах и подкаталогах (корневой каталог - ваш проект)
         System.out.println("==================================================");
         File root = new File("./");
-        printFiles(root, "");
+        printDirectoryDeeply(root, "");
         System.out.println("==================================================");
         System.out.println(root.getAbsoluteFile().getParentFile().getName());
     }
 
-    static void printFiles(File root, String indent) {
-        System.out.println(indent + root.getName());
-        indent += "-";
-        for (File file : root.listFiles()) {
-            if (file.isDirectory()) {
-                printFiles(file, indent);
-            } else {
-                System.out.println(indent + file.getName());
+    static void printDirectoryDeeply(File root, String indent) {
+        File[] files = root.listFiles();
+        if (files != null) {
+            System.out.println(indent + root.getName());
+            indent += "-";
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    printDirectoryDeeply(file, indent);
+                } else {
+                    System.out.println(indent + file.getName());
+                }
             }
         }
     }
