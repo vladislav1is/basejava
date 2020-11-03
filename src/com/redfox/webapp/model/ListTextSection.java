@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class ListTextSection implements Section {
+public class ListTextSection extends Section {
+    private static final long serialVersionUID = 1L;
+
     private final List<String> items;
 
     public ListTextSection(String... items) {
@@ -16,6 +18,10 @@ public class ListTextSection implements Section {
         this.items = items;
     }
 
+    public List<String> getItems() {
+        return items;
+    }
+
     @Override
     public String toString() {
         return items.toString();
@@ -25,10 +31,9 @@ public class ListTextSection implements Section {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         ListTextSection that = (ListTextSection) o;
-
         return items.equals(that.items);
+
     }
 
     @Override

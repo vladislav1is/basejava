@@ -6,6 +6,7 @@ import com.redfox.webapp.model.*;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
@@ -14,6 +15,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
+    protected static final File STORAGE_DIR = new File("C:\\Users\\Lis-56V88DG\\Desktop\\work\\basejava\\storage");
     protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
