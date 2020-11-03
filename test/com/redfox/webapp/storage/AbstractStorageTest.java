@@ -11,11 +11,10 @@ import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("C:\\Users\\Lis-56V88DG\\Desktop\\work\\basejava\\storage");
+    protected static final File STORAGE_DIR = new File("C:\\Users\\Lis-56V88DG\\Desktop\\work\\basejava\\src\\com\\redfox\\webapp\\model\\storageData");
     protected final Storage storage;
 
     private static final String UUID_1 = "uuid1";
@@ -127,7 +126,7 @@ public abstract class AbstractStorageTest {
     public void update() {
         Resume newResume = new Resume(UUID_2, "NewName");
         storage.update(newResume);
-        assertGet(newResume);
+        assertTrue(newResume.equals(storage.get(UUID_2)));
     }
 
     @Test(expected = NotExistStorageException.class)
