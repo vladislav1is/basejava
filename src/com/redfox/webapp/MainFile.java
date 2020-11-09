@@ -3,6 +3,8 @@ package com.redfox.webapp;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class MainFile {
     public static void main(String[] args) throws IOException {
@@ -35,6 +37,9 @@ public class MainFile {
         printDirectoryDeeply(root, "");
         System.out.println("==================================================");
         System.out.println(root.getAbsoluteFile().getParentFile().getName());
+
+        Path test = Paths.get(dir.toString(), "www");
+        System.out.println(test);
     }
 
     static void printDirectoryDeeply(File root, String indent) {

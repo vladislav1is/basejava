@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private File directory;
+    private SerializableStrategy serializableStrategy;
 
-    protected AbstractFileStorage(File directory) {
+    protected FileStorage(File directory, SerializableStrategy serializableStrategy) {
         Objects.requireNonNull(directory, "directory must not be null");
+        Objects.requireNonNull(serializableStrategy, "serializableStrategy must not be null");
+        this.serializableStrategy = serializableStrategy;
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
@@ -45,7 +48,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return serializableStrategy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -61,7 +64,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(File file, Resume resume) {
         try {
-            doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
+            serializableStrategy.doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
         } catch (IOException e) {
             throw new StorageException("File rite error", resume.getUuid(), e);
         }
@@ -98,8 +101,4 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         }
         return list.length;
     }
-
-    protected abstract void doWrite(OutputStream os, Resume resume) throws IOException;
-
-    protected abstract Resume doRead(InputStream is) throws IOException;
 }
