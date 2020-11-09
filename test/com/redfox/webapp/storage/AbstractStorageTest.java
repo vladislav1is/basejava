@@ -2,15 +2,15 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.exception.ExistStorageException;
 import com.redfox.webapp.exception.NotExistStorageException;
-import com.redfox.webapp.model.*;
+import com.redfox.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.redfox.webapp.ResumeTestData.constructResume;
 import static org.junit.Assert.*;
 
 public abstract class AbstractStorageTest {
@@ -28,44 +28,10 @@ public abstract class AbstractStorageTest {
     protected static final Resume R4;
 
     static {
-        R1 = new Resume(UUID_1, "Name1");
-        R2 = new Resume(UUID_2, "Name2");
-        R3 = new Resume(UUID_3, "Name3");
-        R4 = new Resume(UUID_4, "Name4");
-
-        R1.addContact(ContactType.MAIL, new Link("mail@ya.ru"));
-        R1.addContact(ContactType.PHONE, new Link("1111"));
-        R1.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
-        R1.addSection(SectionType.PERSONAL, new TextSection("Personal data"));
-        R1.addSection(SectionType.ACHIEVEMENT, new ListTextSection("Achievement11", "Achievement12", "Achievement13"));
-        R1.addSection(SectionType.QUALIFICATIONS, new ListTextSection("Java", "SQL", "JavaScript"));
-        R1.addSection(SectionType.EXPERIENCE,
-                new OrganizationSection(
-                        new Organization("Organization11", "http://Organization11.ru",
-                                new Organization.Experience(2005, Month.JANUARY, "position1", "content2"),
-                                new Organization.Experience(2001, Month.MARCH, 2005, Month.JANUARY, "position2", "content2")
-                        )
-                )
-        );
-        R1.addSection(SectionType.EDUCATION,
-                new OrganizationSection(
-                        new Organization("Institute",
-                                new Organization.Experience(1996, Month.JANUARY, 2000, Month.DECEMBER, "aspirant"),
-                                new Organization.Experience(2001, Month.MARCH, 2005, Month.JANUARY, "student", "IT facultet")),
-                        new Organization("Organization12", "http://Organization12.ru")
-                )
-        );
-
-        R2.addContact(ContactType.SKYPE, new Link("skype2"));
-        R2.addContact(ContactType.PHONE, new Link("2222"));
-
-        R1.addSection(SectionType.EXPERIENCE,
-                new OrganizationSection(
-                        new Organization("Organization2", "http://Organization2.ru",
-                                new Organization.Experience(2015, Month.JANUARY, "position1", "content2")
-                        )
-                )
-        );
+        R1 = constructResume(UUID_1, "Name1");
+        R2 = constructResume(UUID_2, "Name2");
+        R3 = constructResume(UUID_3, "Name3");
+        R4 = constructResume(UUID_4, "Name4");
     }
 
     public AbstractStorageTest(Storage storage) {
