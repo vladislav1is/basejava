@@ -1,11 +1,11 @@
-package com.redfox.webapp.storage;
+package com.redfox.webapp.storage.serializer;
 
 import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStrategy implements SerializableStrategy {
+public class ObjectStreamSerializer implements SerializerStrategy {
     @Override
     public void doWrite(OutputStream os, Resume resume) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(os)) {

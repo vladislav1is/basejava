@@ -2,6 +2,7 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
+import com.redfox.webapp.storage.serializer.SerializerStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,13 +10,13 @@ import java.util.List;
 import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
-    private File directory;
-    private SerializableStrategy serializableStrategy;
+    private final File directory;
+    private final SerializerStrategy serializer;
 
-    protected FileStorage(File directory, SerializableStrategy serializableStrategy) {
+    protected FileStorage(File directory, SerializerStrategy serializer) {
         Objects.requireNonNull(directory, "directory must not be null");
-        Objects.requireNonNull(serializableStrategy, "serializableStrategy must not be null");
-        this.serializableStrategy = serializableStrategy;
+        Objects.requireNonNull(serializer, "serializer must not be null");
+        this.serializer = serializer;
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
@@ -40,7 +41,7 @@ public class FileStorage extends AbstractStorage<File> {
         try {
             file.createNewFile();
         } catch (IOException e) {
-            throw new StorageException("Couldn't create file " + file.getAbsolutePath(), file.getName(), e);
+            throw new StorageException("Couldn't create file " + file.getAbsolutePath(), resume.getUuid(), e);
         }
         doUpdate(file, resume);
     }
@@ -48,7 +49,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File file) {
         try {
-            return serializableStrategy.doRead(new BufferedInputStream(new FileInputStream(file)));
+            return serializer.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -64,7 +65,7 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(File file, Resume resume) {
         try {
-            serializableStrategy.doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
+            serializer.doWrite(new BufferedOutputStream(new FileOutputStream(file)), resume);
         } catch (IOException e) {
             throw new StorageException("File rite error", resume.getUuid(), e);
         }
@@ -74,7 +75,7 @@ public class FileStorage extends AbstractStorage<File> {
     protected List<Resume> doCopyAll() {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("Directory reed error", null);
+            throw new StorageException("Directory reed error");
         }
         List<Resume> resumes = new ArrayList<>(files.length);
         for (File file : files) {
@@ -97,7 +98,7 @@ public class FileStorage extends AbstractStorage<File> {
     public int size() {
         String[] list = directory.list();
         if (list == null) {
-            throw new StorageException("Directory reed error", null);
+            throw new StorageException("Directory reed error");
         }
         return list.length;
     }

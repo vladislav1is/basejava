@@ -2,8 +2,10 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
+import com.redfox.webapp.storage.serializer.SerializerStrategy;
 
-import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,16 +13,17 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
-    private Path directory;
-    private SerializableStrategy serializableStrategy;
+    private final Path directory;
+    private final SerializerStrategy serializer;
 
-    protected PathStorage(File dir, SerializableStrategy serializableStrategy) {
-        Objects.requireNonNull(serializableStrategy, "serializableStrategy must not be null");
-        this.serializableStrategy = serializableStrategy;
-        directory = dir.toPath();
-        Objects.requireNonNull(directory, "directory must not be null");
+    protected PathStorage(String dir, SerializerStrategy serializer) {
+        Objects.requireNonNull(dir, "dir must not be null");
+        Objects.requireNonNull(serializer, "serializer must not be null");
+        this.serializer = serializer;
+        directory = Paths.get(dir);
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(dir + "is mot directory or is mot writable");
         }
@@ -28,7 +31,7 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected Path getSearchKey(String uuid) {
-        return Paths.get(directory.toString(), uuid);
+        return directory.resolve(uuid);
     }
 
     @Override
@@ -49,9 +52,9 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return serializableStrategy.doRead(Files.newInputStream(path));
+            return serializer.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("Path read error", path.toString(), e);
+            throw new StorageException("Path read error", getFileName(path), e);
         }
     }
 
@@ -60,14 +63,14 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            throw new StorageException("Path delete error", path.toString());
+            throw new StorageException("Path delete error", getFileName(path), e);
         }
     }
 
     @Override
     protected void doUpdate(Path path, Resume resume) {
         try {
-            serializableStrategy.doWrite(Files.newOutputStream(path), resume);
+            serializer.doWrite(new BufferedOutputStream(Files.newOutputStream(path)), resume);
         } catch (IOException e) {
             throw new StorageException("Path rite error", resume.getUuid(), e);
         }
@@ -75,28 +78,28 @@ public class PathStorage extends AbstractStorage<Path> {
 
     @Override
     protected List<Resume> doCopyAll() {
-        try {
-            return Files.list(directory).map(this::doGet).collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new StorageException("Directory reed error ", null);
-        }
+        return getFilesStream(directory).map(this::doGet).collect(Collectors.toList());
     }
 
     @Override
     public void clear() {
-        try {
-            Files.list(directory).forEach(this::doDelete);
-        } catch (IOException e) {
-            throw new StorageException("Path delete error", null);
-        }
+        getFilesStream(directory).forEach(this::doDelete);
     }
 
     @Override
     public int size() {
+        return (int) getFilesStream(directory).count();
+    }
+
+    private String getFileName(Path path) {
+        return path.getFileName().toString();
+    }
+
+    private Stream<Path> getFilesStream(Path directory) {
         try {
-            return (int) Files.list(directory).count();
+            return Files.list(directory);
         } catch (IOException e) {
-            throw new StorageException("Directory reed error", null);
+            throw new StorageException("Directory reed error", e);
         }
     }
 }
