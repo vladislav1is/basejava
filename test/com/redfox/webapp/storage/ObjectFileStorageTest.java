@@ -2,9 +2,9 @@ package com.redfox.webapp.storage;
 
 import com.redfox.webapp.storage.serializer.ObjectStreamSerializer;
 
-public class FileStorageTest extends AbstractStorageTest {
+public class ObjectFileStorageTest extends AbstractStorageTest {
 
-    public FileStorageTest() {
+    public ObjectFileStorageTest() {
         super(new FileStorage(STORAGE_DIR, new ObjectStreamSerializer()));
     }
 }
