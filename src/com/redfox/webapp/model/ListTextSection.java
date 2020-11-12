@@ -26,21 +26,20 @@ public class ListTextSection extends AbstractSection {
     }
 
     @Override
-    public String toString() {
-        return items.toString();
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ListTextSection that = (ListTextSection) o;
         return items.equals(that.items);
-
     }
 
     @Override
     public int hashCode() {
-        return items.hashCode();
+        return Objects.hash(items);
+    }
+
+    @Override
+    public String toString() {
+        return items.toString();
     }
 }

@@ -21,13 +21,18 @@ public class OrganizationSection extends AbstractSection {
         this.organizations = organizations;
     }
 
+    public List<Organization> getOrganizations() {
+        return organizations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        OrganizationSection that = (OrganizationSection) o;
-        return organizations.equals(that.organizations);
 
+        OrganizationSection that = (OrganizationSection) o;
+
+        return organizations.equals(that.organizations);
     }
 
     @Override

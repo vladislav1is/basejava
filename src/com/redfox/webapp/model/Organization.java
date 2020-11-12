@@ -29,17 +29,22 @@ public class Organization implements Serializable {
         this(new Link(name, url), Arrays.asList(positions));
     }
 
+    public Organization(String name, String url, List<Experience> positions) {
+        this(new Link(name, url), positions);
+    }
+
     public Organization(String name, Experience... positions) {
         this(new Link(name), Arrays.asList(positions));
     }
 
-    public Organization(Link homePage, List<Experience> positions) {
-        this.homePage = homePage;
-        this.positions = positions;
-    }
-
     public Organization(String name, List<Experience> positions) {
         this(new Link(name), positions);
+    }
+
+    public Organization(Link homePage, List<Experience> positions) {
+        Objects.requireNonNull(positions, "positions must not be null");
+        this.homePage = homePage;
+        this.positions = positions;
     }
 
     @Override
