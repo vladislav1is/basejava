@@ -21,8 +21,16 @@ public class ListTextSection extends AbstractSection {
         this.items = items;
     }
 
+    public void setItems(List<String> items) {
+        this.items = items;
+    }
+
     public List<String> getItems() {
         return items;
+    }
+
+    public void addItem(String item) {
+        items.add(item);
     }
 
     @Override

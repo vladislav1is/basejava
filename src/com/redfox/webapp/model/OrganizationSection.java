@@ -21,8 +21,16 @@ public class OrganizationSection extends AbstractSection {
         this.organizations = organizations;
     }
 
+    public void setOrganizations(List<Organization> organizations) {
+        this.organizations = organizations;
+    }
+
     public List<Organization> getOrganizations() {
         return organizations;
+    }
+
+    public void addItem(Organization item) {
+        organizations.add(item);
     }
 
     @Override

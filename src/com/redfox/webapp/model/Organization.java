@@ -37,14 +37,18 @@ public class Organization implements Serializable {
         this(new Link(name), Arrays.asList(positions));
     }
 
-    public Organization(String name, List<Experience> positions) {
-        this(new Link(name), positions);
-    }
-
     public Organization(Link homePage, List<Experience> positions) {
         Objects.requireNonNull(positions, "positions must not be null");
         this.homePage = homePage;
         this.positions = positions;
+    }
+
+    public Link getHomePage() {
+        return homePage;
+    }
+
+    public List<Experience> getPositions() {
+        return positions;
     }
 
     @Override
@@ -100,16 +104,32 @@ public class Organization implements Serializable {
             this.description = description;
         }
 
+        public void setStartDate(LocalDate startDate) {
+            this.startDate = startDate;
+        }
+
         public LocalDate getStartDate() {
             return startDate;
+        }
+
+        public void setEndDate(LocalDate endDate) {
+            this.endDate = endDate;
         }
 
         public LocalDate getEndDate() {
             return endDate;
         }
 
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
         public String getTitle() {
             return title;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
 
         public String getDescription() {
@@ -120,11 +140,11 @@ public class Organization implements Serializable {
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Experience position = (Experience) o;
-            return Objects.equals(startDate, position.startDate) &&
-                    Objects.equals(endDate, position.endDate) &&
-                    Objects.equals(title, position.title) &&
-                    Objects.equals(description, position.description);
+            Experience that = (Experience) o;
+            return startDate.equals(that.startDate) &&
+                    endDate.equals(that.endDate) &&
+                    title.equals(that.title) &&
+                    Objects.equals(description, that.description);
         }
 
         @Override
