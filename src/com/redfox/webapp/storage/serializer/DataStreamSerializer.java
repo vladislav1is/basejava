@@ -96,11 +96,11 @@ public class DataStreamSerializer implements SerializerStrategy {
             List<Organization.Experience> positions = organization.getPositions();
             dos.writeInt(positions.size());
             for (Organization.Experience position : positions) {
-                dos.writeUTF(position.getTitle());
                 dos.writeUTF(String.valueOf(position.getDescription()));
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
                 dos.writeUTF(position.getStartDate().format(formatter));
                 dos.writeUTF(position.getEndDate().format(formatter));
+                dos.writeUTF(position.getTitle());
             }
         }
     }
@@ -168,13 +168,14 @@ public class DataStreamSerializer implements SerializerStrategy {
             int posNum = dis.readInt();
             List<Organization.Experience> experiences = new ArrayList<>();
             for (int k = 0; k < posNum; k++) {
-                Organization.Experience experience = new Organization.Experience();
-                experience.setTitle(dis.readUTF());
                 String description = dis.readUTF();
-                experience.setDescription((description.equals("null")) ? null : description);
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-                experience.setStartDate(LocalDate.parse(dis.readUTF(), formatter));
-                experience.setEndDate(LocalDate.parse(dis.readUTF(), formatter));
+                Organization.Experience experience = new Organization.Experience(
+                        LocalDate.parse(dis.readUTF(), formatter),
+                        LocalDate.parse(dis.readUTF(), formatter),
+                        dis.readUTF(),
+                        (description.equals("null")) ? null : description
+                );
                 experiences.add(experience);
             }
             section.addItem(new Organization(linkName, linkUrl, experiences));
