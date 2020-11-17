@@ -16,61 +16,8 @@ public class DataStreamSerializer implements SerializerStrategy {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(resume.getUuid());
             dos.writeUTF(resume.getFullName());
-            Map<ContactType, Link> contacts = resume.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, Link> contact : contacts.entrySet()) {
-                dos.writeUTF(contact.getKey().name());
-                dos.writeUTF(contact.getValue().getName());
-            }
-            // TODO: implements sections
-            Map<SectionType, AbstractSection> sections = resume.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> section : sections.entrySet()) {
-                dos.writeUTF(section.getKey().name());
-
-                AbstractSection abstractSection = section.getValue();
-                dos.writeUTF(abstractSection.getClass().getName());
-                if (abstractSection instanceof TextSection) {
-                    dos.writeUTF(((TextSection) abstractSection).getContent());
-                }
-                if (abstractSection instanceof ListTextSection) {
-                    List<String> items = ((ListTextSection) abstractSection).getItems();
-                    dos.writeInt(items.size());
-                    for (String item : items) {
-                        dos.writeUTF(item);
-                    }
-                }
-                if (abstractSection instanceof OrganizationSection) {
-                    List<Organization> organizations = ((OrganizationSection) abstractSection).getOrganizations();
-                    dos.writeInt(organizations.size());
-                    for (Organization organization : organizations) {
-                        Link link = organization.getHomePage();
-                        dos.writeUTF(link.getName());
-                        //
-                        if (link.getUrl() == null) {
-                            dos.writeUTF("null");
-                        } else {
-                            dos.writeUTF(link.getUrl());
-                        }
-                        //
-                        List<Organization.Experience> positions = organization.getPositions();
-                        dos.writeInt(positions.size());
-                        for (Organization.Experience position : positions) {
-                            dos.writeUTF(position.getTitle());
-                            //
-                            if (position.getDescription() == null) {
-                                dos.writeUTF("null");
-                            } else {
-                                dos.writeUTF(position.getDescription());
-                            }
-                            //
-                            DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-                            dos.writeUTF(position.getStartDate().format(formatter));
-                            dos.writeUTF(position.getEndDate().format(formatter));
-                        }
-                    }
-                }
-            }
+            writeContacts(dos, resume);
+            writeSections(dos, resume);
         }
     }
 
@@ -80,65 +27,157 @@ public class DataStreamSerializer implements SerializerStrategy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int contactsSize = dis.readInt();
-            for (int i = 0; i < contactsSize; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), new Link(dis.readUTF()));
-            }
-            // TODO: implements sections
-            int sectionSize = dis.readInt();
-            for (int i = 0; i < sectionSize; i++) {
-                SectionType sectionType = SectionType.valueOf(dis.readUTF());
-                Class<? extends AbstractSection> clazz = null;
-                try {
-                    clazz = (Class<? extends AbstractSection>) Class.forName(dis.readUTF());
-                    AbstractSection section = clazz.getConstructor().newInstance();
-
-                    if (section instanceof TextSection) {
-                        ((TextSection) section).setContent(dis.readUTF());
-                    }
-                    if (section instanceof ListTextSection) {
-                        int textsNum = dis.readInt();
-                        ((ListTextSection) section).setItems(new ArrayList<>());
-                        for (int j = 0; j < textsNum; j++) {
-                            ((ListTextSection) section).addItem(dis.readUTF());
-                        }
-                    }
-                    if (section instanceof OrganizationSection) {
-                        int orgsNum = dis.readInt();
-                        ((OrganizationSection) section).setOrganizations(new ArrayList<>());
-                        for (int j = 0; j < orgsNum; j++) {
-                            String linkName = dis.readUTF();
-                            String linkUrl = dis.readUTF();
-                            if (linkUrl.equals("null")) {
-                                linkUrl = null;
-                            }
-                            //
-                            int posNum = dis.readInt();
-                            List<Organization.Experience> experiences = new ArrayList<>();
-                            for (int k = 0; k < posNum; k++) {
-                                Organization.Experience experience = new Organization.Experience();
-                                experience.setTitle(dis.readUTF());
-                                //
-                                String description = dis.readUTF();
-                                if (description.equals("null")) {
-                                    description = null;
-                                }
-                                experience.setDescription(description);
-                                //
-                                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
-                                experience.setStartDate(LocalDate.parse(dis.readUTF(), formatter));
-                                experience.setEndDate(LocalDate.parse(dis.readUTF(), formatter));
-                                experiences.add(experience);
-                            }
-                            ((OrganizationSection) section).addItem(new Organization(linkName, linkUrl, experiences));
-                        }
-                    }
-                    resume.addSection(sectionType, section);
-                } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
+            readContacts(dis, resume);
+            readSections(dis, resume);
             return resume;
+        }
+    }
+
+    private void writeContacts(DataOutputStream dos, Resume resume) throws IOException {
+        Map<ContactType, Link> contacts = resume.getContacts();
+        dos.writeInt(contacts.size());
+        for (Map.Entry<ContactType, Link> contact : contacts.entrySet()) {
+            dos.writeUTF(contact.getKey().name());
+            dos.writeUTF(contact.getValue().getName());
+        }
+//        contacts.entrySet().stream()
+//                .forEach(contact -> {
+//                    try {
+//                        dos.writeUTF(contact.getKey().name());
+//                        dos.writeUTF(contact.getValue().getName());
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                });
+    }
+
+    private void writeSections(DataOutputStream dos, Resume resume) throws IOException {
+        Map<SectionType, AbstractSection> sections = resume.getSections();
+        dos.writeInt(sections.size());
+        for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
+            dos.writeUTF(entry.getKey().name());
+            AbstractSection section = entry.getValue();
+            writeSectionClassName(dos, section);
+            if (section instanceof TextSection) {
+                writeTextSection(dos, (TextSection) section);
+            }
+            if (section instanceof ListTextSection) {
+                writeListTextSection(dos, (ListTextSection) section);
+            }
+            if (section instanceof OrganizationSection) {
+                writeOrganizationSection(dos, (OrganizationSection) section);
+            }
+        }
+    }
+
+    private void writeSectionClassName(DataOutputStream dos, AbstractSection section) throws IOException {
+        dos.writeUTF(section.getClass().getName());
+    }
+
+    private void writeTextSection(DataOutputStream dos, TextSection section) throws IOException {
+        dos.writeUTF(section.getContent());
+    }
+
+    private void writeListTextSection(DataOutputStream dos, ListTextSection section) throws IOException {
+        List<String> items = section.getItems();
+        dos.writeInt(items.size());
+        for (String item : items) {
+            dos.writeUTF(item);
+        }
+    }
+
+    private void writeOrganizationSection(DataOutputStream dos, OrganizationSection section) throws IOException {
+        List<Organization> organizations = section.getOrganizations();
+        dos.writeInt(organizations.size());
+        for (Organization organization : organizations) {
+            Link link = organization.getHomePage();
+            dos.writeUTF(link.getName());
+            dos.writeUTF(String.valueOf(link.getUrl()));
+            List<Organization.Experience> positions = organization.getPositions();
+            dos.writeInt(positions.size());
+            for (Organization.Experience position : positions) {
+                dos.writeUTF(position.getTitle());
+                dos.writeUTF(String.valueOf(position.getDescription()));
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+                dos.writeUTF(position.getStartDate().format(formatter));
+                dos.writeUTF(position.getEndDate().format(formatter));
+            }
+        }
+    }
+
+    private void readContacts(DataInputStream dis, Resume resume) throws IOException {
+        int contactsSize = dis.readInt();
+        for (int i = 0; i < contactsSize; i++) {
+            resume.addContact(ContactType.valueOf(dis.readUTF()), new Link(dis.readUTF()));
+        }
+    }
+
+    private void readSections(DataInputStream dis, Resume resume) throws IOException {
+        int sectionSize = dis.readInt();
+        for (int i = 0; i < sectionSize; i++) {
+            SectionType sectionType = SectionType.valueOf(dis.readUTF());
+            AbstractSection section = readSectionInstance(dis);
+            if (section instanceof TextSection) {
+                readTextSection(dis, (TextSection) section);
+            }
+            if (section instanceof ListTextSection) {
+                readListTextSection(dis, (ListTextSection) section);
+            }
+            if (section instanceof OrganizationSection) {
+                readOrganizationSection(dis, (OrganizationSection) section);
+            }
+            resume.addSection(sectionType, section);
+        }
+    }
+
+    private AbstractSection readSectionInstance(DataInputStream dis) throws IOException {
+        Class<?> clazz;
+        AbstractSection section = null;
+        try {
+            clazz = readSectionClassName(dis);
+            section = (AbstractSection) clazz.getConstructor().newInstance();
+        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return section;
+    }
+
+    private Class<?> readSectionClassName(DataInputStream dis) throws IOException, ClassNotFoundException {
+        return Class.forName(dis.readUTF());
+    }
+
+    private void readTextSection(DataInputStream dis, TextSection section) throws IOException {
+        section.setContent(dis.readUTF());
+    }
+
+    private void readListTextSection(DataInputStream dis, ListTextSection section) throws IOException {
+        int textsNum = dis.readInt();
+        section.setItems(new ArrayList<>());
+        for (int j = 0; j < textsNum; j++) {
+            section.addItem(dis.readUTF());
+        }
+    }
+
+    private void readOrganizationSection(DataInputStream dis, OrganizationSection section) throws IOException {
+        int orgsNum = dis.readInt();
+        section.setOrganizations(new ArrayList<>());
+        for (int j = 0; j < orgsNum; j++) {
+            String linkName = dis.readUTF();
+            String linkUrl = dis.readUTF();
+            linkUrl = (linkUrl.equals("null")) ? null : linkUrl;
+            int posNum = dis.readInt();
+            List<Organization.Experience> experiences = new ArrayList<>();
+            for (int k = 0; k < posNum; k++) {
+                Organization.Experience experience = new Organization.Experience();
+                experience.setTitle(dis.readUTF());
+                String description = dis.readUTF();
+                experience.setDescription((description.equals("null")) ? null : description);
+                DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
+                experience.setStartDate(LocalDate.parse(dis.readUTF(), formatter));
+                experience.setEndDate(LocalDate.parse(dis.readUTF(), formatter));
+                experiences.add(experience);
+            }
+            section.addItem(new Organization(linkName, linkUrl, experiences));
         }
     }
 }
