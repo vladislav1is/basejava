@@ -40,6 +40,10 @@ public class DataStreamSerializer implements SerializerStrategy {
             dos.writeUTF(contact.getKey().name());
             dos.writeUTF(contact.getValue().getName());
         }
+
+
+        //writeWithExeption(dos, FuncMeth<T> );
+
 //        contacts.entrySet().stream()
 //                .forEach(contact -> {
 //                    try {
@@ -57,21 +61,27 @@ public class DataStreamSerializer implements SerializerStrategy {
         for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
             dos.writeUTF(entry.getKey().name());
             AbstractSection section = entry.getValue();
-            writeSectionClassName(dos, section);
-            if (section instanceof TextSection) {
-                writeTextSection(dos, (TextSection) section);
-            }
-            if (section instanceof ListTextSection) {
-                writeListTextSection(dos, (ListTextSection) section);
-            }
-            if (section instanceof OrganizationSection) {
-                writeOrganizationSection(dos, (OrganizationSection) section);
+            String sectionClassName = writeSectionClassName(dos, section);
+            switch (sectionClassName) {
+                case "TextSection":
+                    writeTextSection(dos, (TextSection) section);
+                    break;
+                case "ListTextSection":
+                    writeListTextSection(dos, (ListTextSection) section);
+                    break;
+                case "OrganizationSection":
+                    writeOrganizationSection(dos, (OrganizationSection) section);
+                    break;
+                default:
+                    throw new ClassCastException();
             }
         }
     }
 
-    private void writeSectionClassName(DataOutputStream dos, AbstractSection section) throws IOException {
-        dos.writeUTF(section.getClass().getName());
+    private String writeSectionClassName(DataOutputStream dos, AbstractSection section) throws IOException {
+        String sectionClassName = section.getClass().getSimpleName();
+        dos.writeUTF(sectionClassName);
+        return sectionClassName;
     }
 
     private void writeTextSection(DataOutputStream dos, TextSection section) throws IOException {
@@ -116,25 +126,30 @@ public class DataStreamSerializer implements SerializerStrategy {
         int sectionSize = dis.readInt();
         for (int i = 0; i < sectionSize; i++) {
             SectionType sectionType = SectionType.valueOf(dis.readUTF());
-            AbstractSection section = readSectionInstance(dis);
-            if (section instanceof TextSection) {
-                readTextSection(dis, (TextSection) section);
-            }
-            if (section instanceof ListTextSection) {
-                readListTextSection(dis, (ListTextSection) section);
-            }
-            if (section instanceof OrganizationSection) {
-                readOrganizationSection(dis, (OrganizationSection) section);
+            String sectionClassName = readSectionClassName(dis);
+            AbstractSection section = readSectionInstance(sectionClassName);
+            switch (sectionClassName) {
+                case "TextSection":
+                    readTextSection(dis, (TextSection) section);
+                    break;
+                case "ListTextSection":
+                    readListTextSection(dis, (ListTextSection) section);
+                    break;
+                case "OrganizationSection":
+                    readOrganizationSection(dis, (OrganizationSection) section);
+                    break;
+                default:
+                    throw new ClassCastException();
             }
             resume.addSection(sectionType, section);
         }
     }
 
-    private AbstractSection readSectionInstance(DataInputStream dis) throws IOException {
+    private AbstractSection readSectionInstance(String sectionClassName) {
         Class<?> clazz;
         AbstractSection section = null;
         try {
-            clazz = readSectionClassName(dis);
+            clazz = Class.forName("com.redfox.webapp.model." + sectionClassName);
             section = (AbstractSection) clazz.getConstructor().newInstance();
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
@@ -142,8 +157,8 @@ public class DataStreamSerializer implements SerializerStrategy {
         return section;
     }
 
-    private Class<?> readSectionClassName(DataInputStream dis) throws IOException, ClassNotFoundException {
-        return Class.forName(dis.readUTF());
+    private String readSectionClassName(DataInputStream dis) throws IOException {
+        return dis.readUTF();
     }
 
     private void readTextSection(DataInputStream dis, TextSection section) throws IOException {
