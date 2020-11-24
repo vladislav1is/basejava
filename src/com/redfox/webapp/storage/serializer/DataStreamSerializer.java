@@ -3,12 +3,13 @@ package com.redfox.webapp.storage.serializer;
 import com.redfox.webapp.model.*;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import static com.redfox.webapp.model.SectionType.valueOf;
 
 public class DataStreamSerializer implements SerializerStrategy {
     @Override
@@ -59,29 +60,26 @@ public class DataStreamSerializer implements SerializerStrategy {
         Map<SectionType, AbstractSection> sections = resume.getSections();
         dos.writeInt(sections.size());
         for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-            dos.writeUTF(entry.getKey().name());
+            SectionType sectionType = entry.getKey();
+            dos.writeUTF(sectionType.name());
             AbstractSection section = entry.getValue();
-            String sectionClassName = writeSectionClassName(dos, section);
-            switch (sectionClassName) {
-                case "TextSection":
+            switch (sectionType) {
+                case OBJECTIVE:
+                case PERSONAL:
                     writeTextSection(dos, (TextSection) section);
                     break;
-                case "ListTextSection":
+                case ACHIEVEMENT:
+                case QUALIFICATIONS:
                     writeListTextSection(dos, (ListTextSection) section);
                     break;
-                case "OrganizationSection":
+                case EXPERIENCE:
+                case EDUCATION:
                     writeOrganizationSection(dos, (OrganizationSection) section);
                     break;
                 default:
-                    throw new ClassCastException();
+                    throw new IllegalStateException("Unexpected value: " + sectionType);
             }
         }
-    }
-
-    private String writeSectionClassName(DataOutputStream dos, AbstractSection section) throws IOException {
-        String sectionClassName = section.getClass().getSimpleName();
-        dos.writeUTF(sectionClassName);
-        return sectionClassName;
     }
 
     private void writeTextSection(DataOutputStream dos, TextSection section) throws IOException {
@@ -102,11 +100,13 @@ public class DataStreamSerializer implements SerializerStrategy {
         for (Organization organization : organizations) {
             Link link = organization.getHomePage();
             dos.writeUTF(link.getName());
-            dos.writeUTF(String.valueOf(link.getUrl()));
+            String linkUrl = link.getUrl();
+            dos.writeUTF((linkUrl == null) ? "null" : linkUrl);
             List<Organization.Experience> positions = organization.getPositions();
             dos.writeInt(positions.size());
             for (Organization.Experience position : positions) {
-                dos.writeUTF(String.valueOf(position.getDescription()));
+                String description = position.getDescription();
+                dos.writeUTF((description == null) ? "null" : description);
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
                 dos.writeUTF(position.getStartDate().format(formatter));
                 dos.writeUTF(position.getEndDate().format(formatter));
@@ -125,40 +125,29 @@ public class DataStreamSerializer implements SerializerStrategy {
     private void readSections(DataInputStream dis, Resume resume) throws IOException {
         int sectionSize = dis.readInt();
         for (int i = 0; i < sectionSize; i++) {
-            SectionType sectionType = SectionType.valueOf(dis.readUTF());
-            String sectionClassName = readSectionClassName(dis);
-            AbstractSection section = readSectionInstance(sectionClassName);
-            switch (sectionClassName) {
-                case "TextSection":
+            SectionType sectionType = valueOf(dis.readUTF());
+            AbstractSection section;
+            switch (sectionType) {
+                case OBJECTIVE:
+                case PERSONAL:
+                    section = new TextSection();
                     readTextSection(dis, (TextSection) section);
                     break;
-                case "ListTextSection":
+                case ACHIEVEMENT:
+                case QUALIFICATIONS:
+                    section = new ListTextSection();
                     readListTextSection(dis, (ListTextSection) section);
                     break;
-                case "OrganizationSection":
+                case EXPERIENCE:
+                case EDUCATION:
+                    section = new OrganizationSection();
                     readOrganizationSection(dis, (OrganizationSection) section);
                     break;
                 default:
-                    throw new ClassCastException();
+                    throw new IllegalStateException("Unexpected value: " + sectionType);
             }
             resume.addSection(sectionType, section);
         }
-    }
-
-    private AbstractSection readSectionInstance(String sectionClassName) {
-        Class<?> clazz;
-        AbstractSection section = null;
-        try {
-            clazz = Class.forName("com.redfox.webapp.model." + sectionClassName);
-            section = (AbstractSection) clazz.getConstructor().newInstance();
-        } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return section;
-    }
-
-    private String readSectionClassName(DataInputStream dis) throws IOException {
-        return dis.readUTF();
     }
 
     private void readTextSection(DataInputStream dis, TextSection section) throws IOException {
