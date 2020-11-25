@@ -1,11 +1,13 @@
 package com.redfox.webapp.storage.serializer;
 
 import com.redfox.webapp.model.*;
+import com.redfox.webapp.util.FunctionWithIOExceptions;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -37,82 +39,69 @@ public class DataStreamSerializer implements SerializerStrategy {
     private void writeContacts(DataOutputStream dos, Resume resume) throws IOException {
         Map<ContactType, Link> contacts = resume.getContacts();
         dos.writeInt(contacts.size());
-        for (Map.Entry<ContactType, Link> contact : contacts.entrySet()) {
+        writeWithExeption(contacts.entrySet(), contact -> {
             dos.writeUTF(contact.getKey().name());
             dos.writeUTF(contact.getValue().getName());
-        }
-
-
-        //writeWithExeption(dos, FuncMeth<T> );
-
-//        contacts.entrySet().stream()
-//                .forEach(contact -> {
-//                    try {
-//                        dos.writeUTF(contact.getKey().name());
-//                        dos.writeUTF(contact.getValue().getName());
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                });
+        });
     }
+
 
     private void writeSections(DataOutputStream dos, Resume resume) throws IOException {
         Map<SectionType, AbstractSection> sections = resume.getSections();
         dos.writeInt(sections.size());
-        for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-            SectionType sectionType = entry.getKey();
+        writeWithExeption(sections.entrySet(), section -> {
+            SectionType sectionType = section.getKey();
             dos.writeUTF(sectionType.name());
-            AbstractSection section = entry.getValue();
+            AbstractSection sectionValue = section.getValue();
             switch (sectionType) {
                 case OBJECTIVE:
                 case PERSONAL:
-                    writeTextSection(dos, (TextSection) section);
+                    writeTextSection(dos, (TextSection) sectionValue);
                     break;
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
-                    writeListTextSection(dos, (ListTextSection) section);
+                    writeListTextSection(dos, (ListTextSection) sectionValue);
                     break;
                 case EXPERIENCE:
                 case EDUCATION:
-                    writeOrganizationSection(dos, (OrganizationSection) section);
+                    writeOrganizationSection(dos, (OrganizationSection) sectionValue);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + sectionType);
             }
-        }
+        });
     }
 
-    private void writeTextSection(DataOutputStream dos, TextSection section) throws IOException {
-        dos.writeUTF(section.getContent());
+    private void writeTextSection(DataOutputStream dos, TextSection sectionValue) throws IOException {
+        dos.writeUTF(sectionValue.getContent());
     }
 
-    private void writeListTextSection(DataOutputStream dos, ListTextSection section) throws IOException {
-        List<String> items = section.getItems();
+    private void writeListTextSection(DataOutputStream dos, ListTextSection sectionValue) throws IOException {
+        List<String> items = sectionValue.getItems();
         dos.writeInt(items.size());
-        for (String item : items) {
-            dos.writeUTF(item);
-        }
+        writeWithExeption(items, dos::writeUTF);
     }
 
-    private void writeOrganizationSection(DataOutputStream dos, OrganizationSection section) throws IOException {
-        List<Organization> organizations = section.getOrganizations();
+    private void writeOrganizationSection(DataOutputStream dos, OrganizationSection sectionValue) throws IOException {
+        List<Organization> organizations = sectionValue.getOrganizations();
         dos.writeInt(organizations.size());
-        for (Organization organization : organizations) {
+        writeWithExeption(organizations, organization -> {
             Link link = organization.getHomePage();
             dos.writeUTF(link.getName());
             String linkUrl = link.getUrl();
             dos.writeUTF((linkUrl == null) ? "null" : linkUrl);
             List<Organization.Experience> positions = organization.getPositions();
             dos.writeInt(positions.size());
-            for (Organization.Experience position : positions) {
+            writeWithExeption(positions, position -> {
                 String description = position.getDescription();
                 dos.writeUTF((description == null) ? "null" : description);
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
                 dos.writeUTF(position.getStartDate().format(formatter));
                 dos.writeUTF(position.getEndDate().format(formatter));
                 dos.writeUTF(position.getTitle());
-            }
-        }
+            });
+        });
+
     }
 
     private void readContacts(DataInputStream dis, Resume resume) throws IOException {
@@ -126,45 +115,45 @@ public class DataStreamSerializer implements SerializerStrategy {
         int sectionSize = dis.readInt();
         for (int i = 0; i < sectionSize; i++) {
             SectionType sectionType = valueOf(dis.readUTF());
-            AbstractSection section;
+            AbstractSection sectionValue;
             switch (sectionType) {
                 case OBJECTIVE:
                 case PERSONAL:
-                    section = new TextSection();
-                    readTextSection(dis, (TextSection) section);
+                    sectionValue = new TextSection();
+                    readTextSection(dis, (TextSection) sectionValue);
                     break;
                 case ACHIEVEMENT:
                 case QUALIFICATIONS:
-                    section = new ListTextSection();
-                    readListTextSection(dis, (ListTextSection) section);
+                    sectionValue = new ListTextSection();
+                    readListTextSection(dis, (ListTextSection) sectionValue);
                     break;
                 case EXPERIENCE:
                 case EDUCATION:
-                    section = new OrganizationSection();
-                    readOrganizationSection(dis, (OrganizationSection) section);
+                    sectionValue = new OrganizationSection();
+                    readOrganizationSection(dis, (OrganizationSection) sectionValue);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + sectionType);
             }
-            resume.addSection(sectionType, section);
+            resume.addSection(sectionType, sectionValue);
         }
     }
 
-    private void readTextSection(DataInputStream dis, TextSection section) throws IOException {
-        section.setContent(dis.readUTF());
+    private void readTextSection(DataInputStream dis, TextSection sectionValue) throws IOException {
+        sectionValue.setContent(dis.readUTF());
     }
 
-    private void readListTextSection(DataInputStream dis, ListTextSection section) throws IOException {
+    private void readListTextSection(DataInputStream dis, ListTextSection sectionValue) throws IOException {
         int textsNum = dis.readInt();
-        section.setItems(new ArrayList<>());
+        sectionValue.setItems(new ArrayList<>());
         for (int j = 0; j < textsNum; j++) {
-            section.addItem(dis.readUTF());
+            sectionValue.addItem(dis.readUTF());
         }
     }
 
-    private void readOrganizationSection(DataInputStream dis, OrganizationSection section) throws IOException {
+    private void readOrganizationSection(DataInputStream dis, OrganizationSection sectionValue) throws IOException {
         int orgsNum = dis.readInt();
-        section.setOrganizations(new ArrayList<>());
+        sectionValue.setOrganizations(new ArrayList<>());
         for (int j = 0; j < orgsNum; j++) {
             String linkName = dis.readUTF();
             String linkUrl = dis.readUTF();
@@ -182,7 +171,13 @@ public class DataStreamSerializer implements SerializerStrategy {
                 );
                 experiences.add(experience);
             }
-            section.addItem(new Organization(linkName, linkUrl, experiences));
+            sectionValue.addItem(new Organization(linkName, linkUrl, experiences));
+        }
+    }
+
+    private static <A, T extends IOException> void writeWithExeption(Collection<A> source, FunctionWithIOExceptions<A, T> function) throws T {
+        for (A a : source) {
+            function.apply(a);
         }
     }
 }
