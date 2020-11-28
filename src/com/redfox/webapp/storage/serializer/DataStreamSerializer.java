@@ -1,7 +1,6 @@
 package com.redfox.webapp.storage.serializer;
 
 import com.redfox.webapp.model.*;
-import com.redfox.webapp.util.FunctionWithIOExceptions;
 
 import java.io.*;
 import java.time.LocalDate;
@@ -37,19 +36,17 @@ public class DataStreamSerializer implements SerializerStrategy {
     }
 
     private void writeContacts(DataOutputStream dos, Resume resume) throws IOException {
-        Map<ContactType, Link> contacts = resume.getContacts();
-        dos.writeInt(contacts.size());
-        writeWithExeption(contacts.entrySet(), contact -> {
+        Map<ContactType, String> contacts = resume.getContacts();
+        writeWithException(contacts.entrySet(), dos, contact -> {
             dos.writeUTF(contact.getKey().name());
-            dos.writeUTF(contact.getValue().getName());
+            dos.writeUTF(contact.getValue());
         });
     }
 
 
     private void writeSections(DataOutputStream dos, Resume resume) throws IOException {
         Map<SectionType, AbstractSection> sections = resume.getSections();
-        dos.writeInt(sections.size());
-        writeWithExeption(sections.entrySet(), section -> {
+        writeWithException(sections.entrySet(), dos, section -> {
             SectionType sectionType = section.getKey();
             dos.writeUTF(sectionType.name());
             AbstractSection sectionValue = section.getValue();
@@ -78,21 +75,18 @@ public class DataStreamSerializer implements SerializerStrategy {
 
     private void writeListTextSection(DataOutputStream dos, ListTextSection sectionValue) throws IOException {
         List<String> items = sectionValue.getItems();
-        dos.writeInt(items.size());
-        writeWithExeption(items, dos::writeUTF);
+        writeWithException(items, dos, dos::writeUTF);
     }
 
     private void writeOrganizationSection(DataOutputStream dos, OrganizationSection sectionValue) throws IOException {
         List<Organization> organizations = sectionValue.getOrganizations();
-        dos.writeInt(organizations.size());
-        writeWithExeption(organizations, organization -> {
+        writeWithException(organizations, dos, organization -> {
             Link link = organization.getHomePage();
             dos.writeUTF(link.getName());
             String linkUrl = link.getUrl();
             dos.writeUTF((linkUrl == null) ? "null" : linkUrl);
             List<Organization.Experience> positions = organization.getPositions();
-            dos.writeInt(positions.size());
-            writeWithExeption(positions, position -> {
+            writeWithException(positions, dos, position -> {
                 String description = position.getDescription();
                 dos.writeUTF((description == null) ? "null" : description);
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
@@ -105,10 +99,7 @@ public class DataStreamSerializer implements SerializerStrategy {
     }
 
     private void readContacts(DataInputStream dis, Resume resume) throws IOException {
-        int contactsSize = dis.readInt();
-        for (int i = 0; i < contactsSize; i++) {
-            resume.addContact(ContactType.valueOf(dis.readUTF()), new Link(dis.readUTF()));
-        }
+        readWithException(resume, dis, r -> r.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
     }
 
     private void readSections(DataInputStream dis, Resume resume) throws IOException {
@@ -144,23 +135,17 @@ public class DataStreamSerializer implements SerializerStrategy {
     }
 
     private void readListTextSection(DataInputStream dis, ListTextSection sectionValue) throws IOException {
-        int textsNum = dis.readInt();
-        sectionValue.setItems(new ArrayList<>());
-        for (int j = 0; j < textsNum; j++) {
-            sectionValue.addItem(dis.readUTF());
-        }
+        readWithException(sectionValue, dis, sections -> sections.addItem(dis.readUTF()));
     }
 
     private void readOrganizationSection(DataInputStream dis, OrganizationSection sectionValue) throws IOException {
-        int orgsNum = dis.readInt();
-        sectionValue.setOrganizations(new ArrayList<>());
-        for (int j = 0; j < orgsNum; j++) {
+        readWithException(sectionValue, dis, section -> {
             String linkName = dis.readUTF();
             String linkUrl = dis.readUTF();
             linkUrl = (linkUrl.equals("null")) ? null : linkUrl;
-            int posNum = dis.readInt();
             List<Organization.Experience> experiences = new ArrayList<>();
-            for (int k = 0; k < posNum; k++) {
+
+            readWithException(experiences, dis, item -> {
                 String description = dis.readUTF();
                 DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE;
                 Organization.Experience experience = new Organization.Experience(
@@ -170,14 +155,22 @@ public class DataStreamSerializer implements SerializerStrategy {
                         (description.equals("null")) ? null : description
                 );
                 experiences.add(experience);
-            }
+            });
             sectionValue.addItem(new Organization(linkName, linkUrl, experiences));
+        });
+    }
+
+    private <C, T extends IOException> void writeWithException(Collection<C> source, DataOutputStream dos, FunctionWithIOExceptions<C, T> function) throws IOException {
+        dos.writeInt(source.size());
+        for (C item : source) {
+            function.apply(item);
         }
     }
 
-    private static <A, T extends IOException> void writeWithExeption(Collection<A> source, FunctionWithIOExceptions<A, T> function) throws T {
-        for (A a : source) {
-            function.apply(a);
+    private <C, T extends IOException> void readWithException(C sectionValue, DataInputStream dis, FunctionWithIOExceptions<C, T> function) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            function.apply(sectionValue);
         }
     }
 }

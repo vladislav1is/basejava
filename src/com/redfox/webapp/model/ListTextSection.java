@@ -1,5 +1,6 @@
 package com.redfox.webapp.model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -7,7 +8,7 @@ import java.util.Objects;
 public class ListTextSection extends AbstractSection {
     private static final long serialVersionUID = 1L;
 
-    private List<String> items;
+    private List<String> items = new ArrayList<>();
 
     public ListTextSection() {
     }

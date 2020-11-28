@@ -86,6 +86,10 @@ public class Organization implements Serializable {
             this(of(startYear, startMonth), NOW, title, description);
         }
 
+        public Experience(int startYear, Month startMonth, String title) {
+            this(of(startYear, startMonth), NOW, title, null);
+        }
+
         public Experience(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
             this(of(startYear, startMonth), of(endYear, endMonth), title, description);
         }
