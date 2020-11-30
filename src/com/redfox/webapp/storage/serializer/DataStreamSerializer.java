@@ -43,7 +43,6 @@ public class DataStreamSerializer implements SerializerStrategy {
         });
     }
 
-
     private void writeSections(DataOutputStream dos, Resume resume) throws IOException {
         Map<SectionType, AbstractSection> sections = resume.getSections();
         writeWithException(sections.entrySet(), dos, section -> {
@@ -103,8 +102,7 @@ public class DataStreamSerializer implements SerializerStrategy {
     }
 
     private void readSections(DataInputStream dis, Resume resume) throws IOException {
-        int sectionSize = dis.readInt();
-        for (int i = 0; i < sectionSize; i++) {
+        readWithException(resume, dis, r -> {
             SectionType sectionType = valueOf(dis.readUTF());
             AbstractSection sectionValue;
             switch (sectionType) {
@@ -127,7 +125,7 @@ public class DataStreamSerializer implements SerializerStrategy {
                     throw new IllegalStateException("Unexpected value: " + sectionType);
             }
             resume.addSection(sectionType, sectionValue);
-        }
+        });
     }
 
     private void readTextSection(DataInputStream dis, TextSection sectionValue) throws IOException {
@@ -167,10 +165,10 @@ public class DataStreamSerializer implements SerializerStrategy {
         }
     }
 
-    private <C, T extends IOException> void readWithException(C sectionValue, DataInputStream dis, FunctionWithIOExceptions<C, T> function) throws IOException {
+    private <C, T extends IOException> void readWithException(C source, DataInputStream dis, FunctionWithIOExceptions<C, T> function) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            function.apply(sectionValue);
+            function.apply(source);
         }
     }
 }
