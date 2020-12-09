@@ -1,6 +1,5 @@
 package com.redfox.webapp.model;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +10,6 @@ public class OrganizationSection extends AbstractSection {
     private List<Organization> organizations;
 
     public OrganizationSection() {
-        organizations = new ArrayList<>();
     }
 
     public OrganizationSection(Organization... organizations) {

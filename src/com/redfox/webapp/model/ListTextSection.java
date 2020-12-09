@@ -1,6 +1,5 @@
 package com.redfox.webapp.model;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -11,7 +10,6 @@ public class ListTextSection extends AbstractSection {
     private List<String> items;
 
     public ListTextSection() {
-        items = new ArrayList<>();
     }
 
     public ListTextSection(String... items) {
