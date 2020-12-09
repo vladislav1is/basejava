@@ -149,34 +149,34 @@ public class DataStreamSerializer implements SerializerStrategy {
     }
 
     @FunctionalInterface
-    private interface FunctionWithIOExceptions<C, T extends IOException> {
-        void apply(C item) throws T;
+    private interface ConsumerWithIOExceptions<C, T extends IOException> {
+        void accept(C item) throws T;
     }
 
-    private <C, T extends IOException> void writeCollectionWithException(Collection<C> source, DataOutputStream dos, FunctionWithIOExceptions<C, T> function) throws IOException {
+    private <C, T extends IOException> void writeCollectionWithException(Collection<C> source, DataOutputStream dos, ConsumerWithIOExceptions<C, T> function) throws IOException {
         dos.writeInt(source.size());
         for (C item : source) {
-            function.apply(item);
+            function.accept(item);
         }
     }
 
-    private <C, T extends IOException> void readCollectionWithException(C source, DataInputStream dis, FunctionWithIOExceptions<C, T> function) throws IOException {
+    private <C, T extends IOException> void readCollectionWithException(C source, DataInputStream dis, ConsumerWithIOExceptions<C, T> function) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
-            function.apply(source);
+            function.accept(source);
         }
     }
 
     @FunctionalInterface
-    private interface ElementReader<T> {
-        T read() throws IOException;
+    private interface SupplierWithIOExceptions<T> {
+        T get() throws IOException;
     }
 
-    private <T> List<T> readListWithException(DataInputStream dis, ElementReader<T> reader) throws IOException {
+    private <T> List<T> readListWithException(DataInputStream dis, SupplierWithIOExceptions<T> reader) throws IOException {
         int size = dis.readInt();
         List<T> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            list.add(reader.read());
+            list.add(reader.get());
         }
         return list;
     }
