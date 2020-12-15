@@ -1,4 +1,4 @@
-package com.redfox.webapp.util;
+package com.redfox.webapp;
 
 import java.util.Arrays;
 import java.util.List;
