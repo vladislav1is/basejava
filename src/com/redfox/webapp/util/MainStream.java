@@ -47,14 +47,15 @@ public class MainStream {
 //        System.out.println("Sum = " + integers.stream()
 //                .reduce((acc, x) -> acc + x)
 //                .get());
-        return Stream.of(integers.stream()
+        Stream<Integer> integersStream = integers.stream();
+        return Stream.of(integersStream
                 .reduce((acc, x) -> acc + x)
                 .get())
                 .flatMap((Function<Integer, Stream<Integer>>) x -> {
                     if (x % 2 == 0) {
-                        return integers.stream().filter(e -> e % 2 != 0);
+                        return integersStream.filter(e -> e % 2 != 0);
                     } else {
-                        return integers.stream().filter(o -> o % 2 == 0);
+                        return integersStream.filter(o -> o % 2 == 0);
                     }
                 }).collect(Collectors.toList());
     }
