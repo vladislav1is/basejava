@@ -1,6 +1,6 @@
 package com.redfox.webapp;
 
-public class DeadLockMain {
+public class MainDeadLock {
     private static final String lock1 = "lock1";
     private static final String lock2 = "lock2";
 

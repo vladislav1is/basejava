@@ -1,7 +1,7 @@
 package com.redfox.webapp;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -12,18 +12,12 @@ public class MainConcurrency {
     private int counter;
     private final AtomicInteger atomicCounter = new AtomicInteger();
 
-    //    private static final Object LOCK = new Object();
+//    private static final Object LOCK = new Object();
 //    private static final Lock lock = new ReentrantLock();
     private static final ReentrantReadWriteLock reentrantReadWriteLock = new ReentrantReadWriteLock();
     private static final Lock WRITE_LOCK = reentrantReadWriteLock.writeLock();
     private static final Lock READ_LOCK = reentrantReadWriteLock.readLock();
-    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
-        @Override
-        protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-        }
-    };
-//    private static final ThreadLocal<DateTimeFormatter> DATE_FORMAT = ThreadLocal.withInitial(() -> DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
+    private static final ThreadLocal<DateTimeFormatter> DATE_FORMAT = ThreadLocal.withInitial(() -> DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss"));
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println(Thread.currentThread().getName());
@@ -67,8 +61,8 @@ public class MainConcurrency {
             {
                 for (int j = 0; j < 100; j++) {
                     mainConcurrency.inc();
-                    System.out.println(DATE_FORMAT.get().format(new Date()));
-//                    System.out.println(LocalDate.now().format(DATE_FORMAT));
+                    System.out.println(LocalDateTime.now().format(DATE_FORMAT.get()));
+
                 }
                 latch.countDown();
                 return 5;

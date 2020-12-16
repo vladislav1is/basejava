@@ -2,15 +2,13 @@ package com.redfox.webapp;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainStream {
 
     public static void main(String[] args) {
-//        int[] values = new int[]{1, 2, 3, 3, 2, 3};
-        int[] values = new int[]{8, 9};
+        int[] values = new int[]{1, 2, 3, 3, 2, 3};
+//        int[] values = new int[]{8, 9};
         System.out.println(minValue(values));
         //
         System.out.println("===================================");
@@ -23,20 +21,8 @@ public class MainStream {
         составленное из этих уникальных цифр. Например {1,2,3,3,2,3} вернет 123, а {9,8} вернет 89
      */
     static int minValue(int[] values) {
-        values = Arrays.stream(values).
-                filter(value -> 0 < value && value < 10).distinct().sorted().toArray();
-
-        return getSum(values);
-    }
-
-    private static int getSum(int[] values) {
-        int counter = values.length - 1;
-        int sum = 0;
-        for (int i = 0; i < values.length; i++) {
-            sum = (sum + (values[i] * (int) Math.pow(10, counter)));
-            counter--;
-        }
-        return sum;
+        return Arrays.stream(values).distinct().sorted()
+                .reduce((left, right) -> left * 10 + right).getAsInt();
     }
 
     /*
@@ -47,15 +33,9 @@ public class MainStream {
 //        System.out.println("Sum = " + integers.stream()
 //                .reduce((acc, x) -> acc + x)
 //                .get());
-        return Stream.of(integers.stream()
+        Integer sum = integers.stream()
                 .reduce((acc, x) -> acc + x)
-                .get())
-                .flatMap((Function<Integer, Stream<Integer>>) x -> {
-                    if (x % 2 == 0) {
-                        return integers.stream().filter(e -> e % 2 != 0);
-                    } else {
-                        return integers.stream().filter(o -> o % 2 == 0);
-                    }
-                }).collect(Collectors.toList());
+                .get();
+        return integers.stream().filter(x -> (sum % 2 == 0) == (x % 2 != 0)).collect(Collectors.toList());
     }
 }
