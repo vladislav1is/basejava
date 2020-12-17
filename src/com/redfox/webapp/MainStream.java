@@ -29,14 +29,11 @@ public class MainStream {
         если четная - удалить все четные.
      */
     static List<Integer> oddOrEven(List<Integer> integers) {
-        final int sum = integers.stream()
+        int sum = integers.stream()
                 .reduce(0, Integer::sum);
         final boolean isEven = sum % 2 == 0;
         return integers.stream()
-                .filter(x -> {
-                    int num = x % 2;
-                    return isEven == (num != 0);
-                })
+                .filter(x -> isEven == (x % 2 != 0))
                 .collect(Collectors.toList());
     }
 }
