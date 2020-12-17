@@ -1,8 +1,10 @@
 package com.redfox.webapp;
 
-import com.redfox.webapp.model.*;
+import com.redfox.webapp.model.AbstractSection;
+import com.redfox.webapp.model.ContactType;
+import com.redfox.webapp.model.Resume;
+import com.redfox.webapp.model.SectionType;
 
-import java.time.Month;
 import java.util.Map;
 
 public class ResumeTestData {
@@ -14,6 +16,7 @@ public class ResumeTestData {
     public static Resume constructResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
+/*
         resume.addContact(ContactType.PHONE, "8_777_777_77_77");
         resume.addContact(ContactType.SKYPE, "skype1");
         resume.addContact(ContactType.MAIL, "mail@1");
@@ -52,6 +55,7 @@ public class ResumeTestData {
                                 new Organization.Experience(2001, Month.SEPTEMBER, 2005, Month.JULY, "student", "IT facultet")
                         )
                 ));
+*/
         return resume;
     }
 

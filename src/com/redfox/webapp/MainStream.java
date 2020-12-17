@@ -14,9 +14,9 @@ public class MainStream {
     }
 
     /*
-        Метод принимает массив цифр от 1 до 9, надо выбрать уникальные и вернуть минимально возможное число,
-        составленное из этих уникальных цифр. Например {1,2,3,3,2,3} вернет 123, а {9,8} вернет 89
-     */
+        The method accepts an array of digits from 1 to 9, you need to select unique ones and return the minimum possible number,
+        composed of these unique numbers. For example {1,2,3,3,2,3} will return 123 and {9,8} will return 89
+    */
     static int minValue(int[] values) {
         return Arrays.stream(values)
                 .distinct()
@@ -25,15 +25,14 @@ public class MainStream {
     }
 
     /*
-        Метод принимает список цифр и если сумма всех чисел нечетная - удалить все нечетные,
-        если четная - удалить все четные.
-     */
+        The method accepts a list of digits and if the sum of all numbers is odd, remove all odd ones,
+        if even, delete all even ones.
+    */
     static List<Integer> oddOrEven(List<Integer> integers) {
-        int sum = integers.stream()
-                .reduce(0, Integer::sum);
-        final boolean isEven = sum % 2 == 0;
+        final int sumDivRemainder = integers.stream()
+                .reduce(0, Integer::sum) % 2;
         return integers.stream()
-                .filter(x -> isEven == (x % 2 != 0))
+                .filter(x -> sumDivRemainder != x % 2)
                 .collect(Collectors.toList());
     }
 }
