@@ -2,19 +2,19 @@ package com.redfox.webapp;
 
 import com.redfox.webapp.model.SectionType;
 
-public class TestSingleton {
-    private static TestSingleton instance;
+public class MainTestSingleton {
+    private static MainTestSingleton instance;
 
-    private TestSingleton() {
+    private MainTestSingleton() {
     }
 
-    public static TestSingleton getInstance() {
-        if (instance == null) instance = new TestSingleton();
+    public static MainTestSingleton getInstance() {
+        if (instance == null) instance = new MainTestSingleton();
         return instance;
     }
 
     public static void main(String[] args) {
-        TestSingleton.getInstance();
+        MainTestSingleton.getInstance();
         Singleton instance = Singleton.valueOf("INSTANCE");
         System.out.println(instance);
         System.out.println(instance.ordinal());

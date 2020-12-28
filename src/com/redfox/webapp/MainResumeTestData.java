@@ -7,7 +7,7 @@ import com.redfox.webapp.model.SectionType;
 
 import java.util.Map;
 
-public class ResumeTestData {
+public class MainResumeTestData {
     public static void main(String[] args) {
         Resume resume = constructResume("uuid1", "Boris");
         printAll(resume);

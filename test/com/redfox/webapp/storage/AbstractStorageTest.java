@@ -10,7 +10,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.redfox.webapp.ResumeTestData.constructResume;
+import static com.redfox.webapp.MainResumeTestData.constructResume;
 import static org.junit.Assert.*;
 
 public abstract class AbstractStorageTest {

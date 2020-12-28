@@ -9,7 +9,7 @@ import com.redfox.webapp.storage.serializer.XmlStreamSerializer;
 import java.io.File;
 import java.util.HashMap;
 
-import static com.redfox.webapp.ResumeTestData.constructResume;
+import static com.redfox.webapp.MainResumeTestData.constructResume;
 
 /**
  * Test for your com.urise.webapp.storage.ArrayStorage implementation
