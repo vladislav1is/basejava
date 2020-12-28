@@ -18,23 +18,16 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("INSERT INTO resume (uuid, full_name) VALUES (?,?)")) {
-
+        doStatement("INSERT INTO resume (uuid, full_name) VALUES (?,?)", ps -> {
             ps.setString(1, resume.getUuid());
             ps.setString(2, resume.getFullName());
             ps.execute();
-
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        });
     }
 
     @Override
     public Resume get(String uuid) {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume WHERE uuid = ?")) {
-
+        return doStatement("SELECT * FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
@@ -42,39 +35,29 @@ public class SqlStorage implements Storage {
             }
             Resume resume = new Resume(uuid, rs.getString("full_name"));
             return resume;
-
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        });
     }
 
     @Override
     public void delete(String uuid) {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM resume WHERE uuid = ?")) {
+        doStatement("DELETE FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             ps.execute();
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        });
     }
 
     @Override
     public void update(Resume resume) {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("UPDATE resume SET full_name = ? WHERE uuid = ?")) {
+        doStatement("UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
             ps.setString(1, resume.getFullName());
             ps.setString(2, resume.getUuid());
             ps.execute();
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        });
     }
 
     @Override
     public List<Resume> getAllSorted() {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT * FROM resume ORDER BY full_name")) {
+        return doStatement("SELECT * FROM resume ORDER BY full_name", ps -> {
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
                 throw new StorageException("data is empty");
@@ -85,47 +68,52 @@ public class SqlStorage implements Storage {
                 resumes.add(resume);
             }
             return resumes;
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        });
     }
 
     @Override
     public void clear() {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("DELETE FROM resume")) {
+        doStatement("DELETE FROM resume", ps -> {
             ps.execute();
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        });
     }
 
     @Override
     public int size() {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement("SELECT count(uuid) FROM resume;")) {
+        return doStatement("SELECT count(uuid) FROM resume", ps -> {
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
                 throw new StorageException("data is empty");
             }
             return rs.getInt(1);
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+        });
     }
 
-    public void doConnection(String statement) {
+    private interface ConsumerWithSQLExceptions {
+        void execute(PreparedStatement ps) throws SQLException;
+    }
+
+    private void doStatement(String statement, ConsumerWithSQLExceptions helper) {
         try (Connection conn = connectionFactory.getConnection();
              PreparedStatement ps = conn.prepareStatement(statement)) {
-
-            //...
-            // execute(ps);
-
+            helper.execute(ps);
         } catch (SQLException e) {
             throw new StorageException(e);
         }
     }
 
+    private interface SupplierWithSQLExceptions<T> {
+        T execute(PreparedStatement ps) throws SQLException;
+    }
+
+    private <T> T doStatement(String statement, SupplierWithSQLExceptions<T> helper) {
+        try (Connection conn = connectionFactory.getConnection();
+             PreparedStatement ps = conn.prepareStatement(statement)) {
+            return helper.execute(ps);
+        } catch (SQLException e) {
+            throw new StorageException(e);
+        }
+    }
     /*
         Вынести общий код (getConnection(), prepareStatement,
         catch SQLException) в класс SqlHelper
