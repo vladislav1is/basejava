@@ -1,9 +1,11 @@
 package com.redfox.webapp;
 
 import com.redfox.webapp.model.Resume;
-import com.redfox.webapp.sql.SqlStorage;
+import com.redfox.webapp.storage.SqlStorage;
 import com.redfox.webapp.sql.properties.DBConfiguration;
 import com.redfox.webapp.sql.properties.PropertyType;
+
+import java.util.Arrays;
 
 public class MainSqlTestData {
 
@@ -20,20 +22,20 @@ public class MainSqlTestData {
 //        storage.save(new Resume("uuid3", "Bill"));
 //        System.out.println(storage.get("uuid3"));
 
-        Resume resume = new Resume("uuid4", "Boris");
+//        Resume resume = new Resume("uuid4", "Boris");
 //        storage.save(resume);
 //        System.out.println(storage.get(resume.getUuid()));
 //        storage.delete(resume.getUuid());
 //        storage.save(new Resume("uuid5", "Fox"));
 
 //        storage.save(resume);
-//        storage.clear();
-        for (Resume r : storage.getAllSorted()) {
-            System.out.println(r.getUuid() + "//" + r.getFullName());
-        }
+        storage.clear();
+//        for (Resume r : storage.getAllSorted()) {
+//            System.out.println(r.getUuid() + "//" + r.getFullName());
+//        }
 
-        System.out.println(storage.getAllSorted());
-        System.out.println(storage.size());
-//        storage.clear();
+        System.out.println(Arrays.toString(new Resume[]{}));
+        System.out.println(Arrays.toString(storage.getAllSorted().toArray()));
+        //System.out.println(storage.size());
     }
 }

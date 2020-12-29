@@ -3,6 +3,7 @@ package com.redfox.webapp.sql;
 import com.redfox.webapp.sql.properties.DBConfiguration;
 import com.redfox.webapp.sql.properties.PropertyType;
 import com.redfox.webapp.storage.AbstractStorageTest;
+import com.redfox.webapp.storage.SqlStorage;
 
 public class SqlStorageTest extends AbstractStorageTest {
 

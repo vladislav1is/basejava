@@ -5,7 +5,7 @@ import com.redfox.webapp.sql.properties.PropertyType;
 
 public class MainPropertiesTestData {
     public static void main(String[] args) {
-        String path = "config/resumes12.properties";
+        String path = "config/resumes.properties";
 
         DBConfiguration config = new DBConfiguration(path);
         config.setDirectory("config/resumes12.properties");
