@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 
-public class DBConfiguration {
+public class Config {
 
     private String directory;
     private Map<PropertyType, String> properties;
 
-    public DBConfiguration(String directory) {
+    public Config(String directory) {
         Objects.requireNonNull(directory, "directory must not be null");
         this.directory = directory;
         Path dir = Paths.get(directory);
