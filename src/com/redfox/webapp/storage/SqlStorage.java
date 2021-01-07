@@ -1,5 +1,6 @@
 package com.redfox.webapp.storage;
 
+import com.redfox.webapp.exception.ExistStorageException;
 import com.redfox.webapp.exception.NotExistStorageException;
 import com.redfox.webapp.exception.StorageException;
 import com.redfox.webapp.model.Resume;
@@ -19,25 +20,12 @@ public class SqlStorage implements Storage {
 
     @Override
     public void save(Resume resume) {
+        getNotExistedKey(resume.getUuid());
         helper.doStatement("INSERT INTO resume (uuid, full_name) VALUES (?,?)", ps -> {
             ps.setString(1, resume.getUuid());
             ps.setString(2, resume.getFullName());
             ps.execute();
         });
-//        TODO:FIX code below!
-//        helper.doStatement("SELECT * FROM resume WHERE uuid = ?", ps -> {
-//            String uuid = resume.getUuid();
-//            ps.setString(1, uuid);
-//            ResultSet rs = ps.executeQuery();
-//            if (rs.next()) {
-//                throw new ExistStorageException(uuid);
-//            }
-//            helper.doStatement("INSERT INTO resume (uuid, full_name) VALUES (?,?)", ps1 -> {
-//                ps.setString(1, resume.getUuid());
-//                ps.setString(2, resume.getFullName());
-//                ps.execute();
-//            });
-//        });
     }
 
     @Override
@@ -65,10 +53,10 @@ public class SqlStorage implements Storage {
     @Override
     public void update(Resume resume) {
         getExistedKey(resume.getUuid());
-        helper.doStatement("UPDATE resume SET full_name = ? WHERE uuid = ?", ps1 -> {
-            ps1.setString(1, resume.getFullName());
-            ps1.setString(2, resume.getUuid());
-            ps1.execute();
+        helper.doStatement("UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
+            ps.setString(1, resume.getFullName());
+            ps.setString(2, resume.getUuid());
+            ps.execute();
         });
     }
 
@@ -120,7 +108,13 @@ public class SqlStorage implements Storage {
     }
 
     private void getNotExistedKey(String uuid) {
-        //...
+        helper.doStatement("SELECT * FROM resume WHERE uuid = ?", ps -> {
+            ps.setString(1, uuid);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                throw new ExistStorageException(uuid);
+            }
+        });
     }
 
     private static class SqlHelper {

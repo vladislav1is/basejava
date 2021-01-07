@@ -1,6 +1,6 @@
 package com.redfox.webapp.sql.properties;
 
-public enum PropertyType {
+public enum MyPropertyType {
     STORAGE_DIR("storage.dir"),
     DB_URL("db.url"),
     DB_USER("db.user"),
@@ -8,7 +8,7 @@ public enum PropertyType {
 
     private String title;
 
-    PropertyType(String title) {
+    MyPropertyType(String title) {
         this.title = title;
     }
 

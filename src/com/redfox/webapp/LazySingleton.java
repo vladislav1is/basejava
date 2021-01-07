@@ -1,4 +1,4 @@
-package com.redfox.webapp.util;
+package com.redfox.webapp;
 
 public final class LazySingleton {
     private static volatile LazySingleton INSTANCE;
