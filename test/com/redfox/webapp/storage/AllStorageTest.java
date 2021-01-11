@@ -1,5 +1,6 @@
 package com.redfox.webapp.storage;
 
+import com.redfox.webapp.sql.SqlStorageTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -15,7 +16,8 @@ import org.junit.runners.Suite;
                 ObjectPathStorageTest.class,
                 DataPathStorageTest.class,
                 XmlPathStorageTest.class,
-                JsonPathStorageTest.class
+                JsonPathStorageTest.class,
+                SqlStorageTest.class
         }
 )
 public class AllStorageTest {

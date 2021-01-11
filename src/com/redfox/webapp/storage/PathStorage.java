@@ -25,7 +25,7 @@ public class PathStorage extends AbstractStorage<Path> {
         this.serializer = serializer;
         directory = Paths.get(dir);
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
-            throw new IllegalArgumentException(dir + "is not directory or is mot writable");
+            throw new IllegalArgumentException(dir + " is not directory or is mot writable");
         }
     }
 
