@@ -16,7 +16,7 @@ public class MainResumeTestData {
     public static Resume constructResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-/*
+
         resume.addContact(ContactType.PHONE, "8_777_777_77_77");
         resume.addContact(ContactType.SKYPE, "skype1");
         resume.addContact(ContactType.MAIL, "mail@1");
@@ -25,6 +25,7 @@ public class MainResumeTestData {
         resume.addContact(ContactType.STACKOVERFLOW, "linkedin1");
         resume.addContact(ContactType.HOMEPAGE, "https://www.mypage.xxx");
 
+    /*
         resume.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
         resume.addSection(SectionType.PERSONAL, new TextSection("Personal data1"));
         resume.addSection(SectionType.ACHIEVEMENT, new ListTextSection("Achievement11", "Achievement12", "Achievement13"));
@@ -55,7 +56,7 @@ public class MainResumeTestData {
                                 new Organization.Experience(2001, Month.SEPTEMBER, 2005, Month.JULY, "student", "IT facultet")
                         )
                 ));
-*/
+    */
         return resume;
     }
 
