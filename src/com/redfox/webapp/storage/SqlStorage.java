@@ -5,9 +5,9 @@ import com.redfox.webapp.model.ContactType;
 import com.redfox.webapp.model.Resume;
 import com.redfox.webapp.sql.SqlHelper;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,16 +28,7 @@ public class SqlStorage implements Storage {
                 ps.execute();
                 return null;
             });
-            sqlHelper.<Void>doPreparedStatement(conn, "INSERT INTO contact  (resume_uuid, type, value) VALUES (?,?,?)", ps -> {
-                for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-                    ps.setString(1, uuid);
-                    ps.setString(2, entry.getKey().name());
-                    ps.setString(3, entry.getValue());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-                return null;
-            });
+            doInsertContacts(conn, resume);
             return null;
         });
     }
@@ -92,37 +83,12 @@ public class SqlStorage implements Storage {
                 }
                 return null;
             });
-            Map<ContactType, String> entryTypes = new EnumMap<>(ContactType.class);
-            sqlHelper.<Void>doPreparedStatement(conn, "SELECT * FROM contact WHERE resume_uuid = ?", ps -> {
+            sqlHelper.<Void>doPreparedStatement(conn, "DELETE FROM contact WHERE resume_uuid = ?", ps -> {
                 ps.setString(1, uuid);
-                ResultSet rs = ps.executeQuery();
-                while (rs.next()) {
-                    entryTypes.put(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
-                }
                 ps.execute();
                 return null;
             });
-            sqlHelper.<Void>doPreparedStatement(conn, "UPDATE contact SET value = ? WHERE resume_uuid = ? AND type = ?", ps -> {
-                for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-                    String keyType = entry.getKey().name();
-                    ps.setString(1, entry.getValue());
-                    ps.setString(2, uuid);
-                    ps.setString(3, keyType);
-                    entryTypes.remove(ContactType.valueOf(keyType));
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-                return null;
-            });
-            sqlHelper.<Void>doPreparedStatement(conn, "DELETE FROM contact WHERE resume_uuid = ? AND type = ?", ps -> {
-                for (Map.Entry<ContactType, String> entry : entryTypes.entrySet()) {
-                    ps.setString(1, uuid);
-                    ps.setString(2, entry.getKey().name());
-                    ps.addBatch();
-                }
-                ps.executeBatch();
-                return null;
-            });
+            doInsertContacts(conn, resume);
             return null;
         });
     }
@@ -164,6 +130,19 @@ public class SqlStorage implements Storage {
         return sqlHelper.doStatement("SELECT count(*) FROM resume", ps -> {
             ResultSet rs = ps.executeQuery();
             return rs.next() ? rs.getInt(1) : 0;
+        });
+    }
+
+    private void doInsertContacts(Connection conn, Resume resume) {
+        sqlHelper.<Void>doPreparedStatement(conn, "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", ps -> {
+            for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
+                ps.setString(1, resume.getUuid());
+                ps.setString(2, entry.getKey().name());
+                ps.setString(3, entry.getValue());
+                ps.addBatch();
+            }
+            ps.executeBatch();
+            return null;
         });
     }
 }
