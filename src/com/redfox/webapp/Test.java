@@ -1,6 +1,5 @@
 package com.redfox.webapp;
 
-import com.redfox.webapp.model.ContactType;
 import com.redfox.webapp.model.Resume;
 import com.redfox.webapp.storage.SqlStorage;
 
@@ -35,8 +34,8 @@ public class Test {
         storage.save(R3);
 
         Resume newResume = new Resume(UUID_2, "Peter");
-        newResume.addContact(ContactType.GITHUB, "1");
-        newResume.addContact(ContactType.MAIL, "2");
+//        newResume.addContact(ContactType.GITHUB, "1");
+//        newResume.addContact(ContactType.MAIL, "2");
         storage.update(newResume);
         storage.get(UUID_2);
     }

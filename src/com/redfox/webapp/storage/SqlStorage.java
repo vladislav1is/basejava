@@ -7,6 +7,7 @@ import com.redfox.webapp.sql.SqlHelper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -48,13 +49,7 @@ public class SqlStorage implements Storage {
                     }
                     Resume resume = new Resume(uuid, rs.getString("full_name"));
                     do {
-                        String type = rs.getString("type");
-                        if (type != null) {
-                            resume.addContact(
-                                    ContactType.valueOf(type),
-                                    rs.getString("value")
-                            );
-                        }
+                        doAddContact(rs, resume);
                     } while (rs.next());
                     return resume;
                 });
@@ -83,11 +78,7 @@ public class SqlStorage implements Storage {
                 }
                 return null;
             });
-            sqlHelper.<Void>doPreparedStatement(conn, "DELETE FROM contact WHERE resume_uuid = ?", ps -> {
-                ps.setString(1, uuid);
-                ps.execute();
-                return null;
-            });
+            doDeleteContacts(conn, resume);
             doInsertContacts(conn, resume);
             return null;
         });
@@ -110,7 +101,7 @@ public class SqlStorage implements Storage {
                 while (rs.next()) {
                     for (Resume r : resumes) {
                         if (rs.getString("resume_uuid").equals(r.getUuid())) {
-                            r.addContact(ContactType.valueOf(rs.getString("type")), rs.getString("value"));
+                            doAddContact(rs, r);
                         }
                     }
                 }
@@ -133,6 +124,14 @@ public class SqlStorage implements Storage {
         });
     }
 
+    private void doDeleteContacts(Connection conn, Resume resume) {
+        sqlHelper.<Void>doPreparedStatement(conn, "DELETE FROM contact WHERE resume_uuid = ?", ps -> {
+            ps.setString(1, resume.getUuid());
+            ps.execute();
+            return null;
+        });
+    }
+
     private void doInsertContacts(Connection conn, Resume resume) {
         sqlHelper.<Void>doPreparedStatement(conn, "INSERT INTO contact (resume_uuid, type, value) VALUES (?,?,?)", ps -> {
             for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
@@ -144,5 +143,15 @@ public class SqlStorage implements Storage {
             ps.executeBatch();
             return null;
         });
+    }
+
+    private void doAddContact(ResultSet rs, Resume resume) throws SQLException {
+        String type = rs.getString("type");
+        if (type != null) {
+            resume.addContact(
+                    ContactType.valueOf(type),
+                    rs.getString("value")
+            );
+        }
     }
 }
