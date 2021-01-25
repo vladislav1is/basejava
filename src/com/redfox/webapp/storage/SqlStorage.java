@@ -96,7 +96,6 @@ public class SqlStorage implements Storage {
             List<Resume> resumes = new ArrayList<>();
             sqlHelper.<Void>doPreparedStatement(conn, "SELECT uuid, full_name FROM resume ORDER BY full_name, uuid", ps -> {
                 ResultSet rs = ps.executeQuery();
-                // TODO:
                 while (rs.next()) {
                     Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
                     resumes.add(resume);
@@ -114,7 +113,7 @@ public class SqlStorage implements Storage {
                 }
                 return null;
             });
-            sqlHelper.<Void>doPreparedStatement(conn, "SELECT * FROM section s ORDER BY resume_uuid", ps -> {
+            sqlHelper.<Void>doPreparedStatement(conn, "SELECT * FROM section s ORDER BY s.resume_uuid", ps -> {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     for (Resume r : resumes) {
@@ -175,7 +174,7 @@ public class SqlStorage implements Storage {
                         StringBuilder sb = new StringBuilder();
                         List<String> texts = ((ListTextSection) sectionValue).getItems();
                         for (String text : texts) {
-                            sb.append(text + "\n");
+                            sb.append(text).append("\n");
                         }
                         ps.setString(3, sb.toString());
                         break;
