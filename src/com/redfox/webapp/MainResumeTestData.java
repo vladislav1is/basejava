@@ -1,9 +1,6 @@
 package com.redfox.webapp;
 
-import com.redfox.webapp.model.AbstractSection;
-import com.redfox.webapp.model.ContactType;
-import com.redfox.webapp.model.Resume;
-import com.redfox.webapp.model.SectionType;
+import com.redfox.webapp.model.*;
 
 import java.util.Map;
 
@@ -25,11 +22,11 @@ public class MainResumeTestData {
         resume.addContact(ContactType.STACKOVERFLOW, "linkedin1");
         resume.addContact(ContactType.HOMEPAGE, "https://www.mypage.xxx");
 
-    /*
         resume.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
         resume.addSection(SectionType.PERSONAL, new TextSection("Personal data1"));
         resume.addSection(SectionType.ACHIEVEMENT, new ListTextSection("Achievement11", "Achievement12", "Achievement13"));
         resume.addSection(SectionType.QUALIFICATIONS, new ListTextSection("Java", "SQL", "JavaScript"));
+    /*
         resume.addSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
                         new Organization("Organization1", "http://Organization1.ru",

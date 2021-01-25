@@ -8,10 +8,10 @@ import com.redfox.webapp.sql.SqlHelper;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+// TODO: implement Section (except OrganizationSection)
+// TODO: Join and split ListSection by '\n'
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
 
@@ -108,6 +108,8 @@ public class SqlStorage implements Storage {
                 return null;
             });
             return resumes;
+//            HashMap<String, String> map = new LinkedHashMap<>();
+//            new ArrayList<>(map.values());
         });
     }
 

@@ -3,6 +3,7 @@ package com.redfox.webapp.storage;
 import com.redfox.webapp.Config;
 import com.redfox.webapp.exception.ExistStorageException;
 import com.redfox.webapp.exception.NotExistStorageException;
+import com.redfox.webapp.model.ContactType;
 import com.redfox.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +36,10 @@ public abstract class AbstractStorageTest {
         R2 = constructResume(UUID_2, "Name2");
         R3 = constructResume(UUID_3, "Name3");
         R4 = constructResume(UUID_4, "Name4");
+
+        R4.addContact(ContactType.MAIL, "mail@ya.ru");
+        R4.addContact(ContactType.PHONE,"444444");
+        R4.addContact(ContactType.SKYPE, "skype");
     }
 
     public AbstractStorageTest(Storage storage) {
@@ -94,6 +99,10 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() {
         Resume newResume = new Resume(UUID_2, "NewName");
+
+        R2.addContact(ContactType.MAIL, "mail@google.com");
+        R2.addContact(ContactType.SKYPE, "newSkype");
+
         storage.update(newResume);
         assertGet(newResume);
     }
