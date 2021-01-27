@@ -1,8 +1,8 @@
 # [Курс BaseJava (обновленный и переработанный)](http://javaops.ru/reg/basejava)
 
-## Разработка web-приложения "База данных резюме"
+## Разработка com.redfox.webapp.web-приложения "База данных резюме"
 
-В данном курсе вы создадите с нуля web-приложение, реализуя разные способы хранения резюме. Проект включает в себя следующее:
+В данном курсе вы создадите с нуля com.redfox.webapp.web-приложение, реализуя разные способы хранения резюме. Проект включает в себя следующее:
   - **Технологии:** Java 8, GitHub/Git, JUnit, Logging, GSON, JAXB, SQL, PostgreSQL, Сервлеты, HTML, JSP, JSTL, Tomcat, Maven и многое другое
   - **Различные способы реализации хранения резюме:**
      - в сортированном и не сортированном массиве
@@ -13,7 +13,7 @@
         - в формате JSON ([Google Gson](https://en.wikipedia.org/wiki/Gson))
         - в формате XML ([JAXB](https://ru.wikipedia.org/wiki/Java_Architecture_for_XML_Binding))
      -  в реляционной базе [PostgreSQL](https://ru.wikipedia.org/wiki/PostgreSQL)
-  - **Установку (деплой) web-приложения:**
+  - **Установку (деплой) com.redfox.webapp.web-приложения:**
      - в контейнер сервлетов [Tomcat](https://ru.wikipedia.org/wiki/Apache_Tomcat)
      - в облачный сервис [Heroku](https://ru.wikipedia.org/wiki/Heroku)
 
@@ -169,8 +169,8 @@
  - Разбор домашнего задания
  - Введение в HTML
  - Основы протокола HTTP
- - Настройка web.xml
- - Деплой web-приложения в Tomcat
+ - Настройка com.redfox.webapp.web.xml
+ - Деплой com.redfox.webapp.web-приложения в Tomcat
  - Сервлеты
  - Домашнее задание
  
