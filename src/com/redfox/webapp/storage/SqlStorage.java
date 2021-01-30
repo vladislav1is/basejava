@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -93,38 +94,34 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         return sqlHelper.transactionalExecute(conn -> {
-            List<Resume> resumes = new ArrayList<>();
+            Map<String, Resume> resumes = new LinkedHashMap<>();
+
             sqlHelper.<Void>doPreparedStatement(conn, "SELECT uuid, full_name FROM resume ORDER BY full_name, uuid", ps -> {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    Resume resume = new Resume(rs.getString("uuid"), rs.getString("full_name"));
-                    resumes.add(resume);
+                    String uuid = rs.getString("uuid");
+                    resumes.put(uuid, new Resume(uuid, rs.getString("full_name")));
                 }
                 return null;
             });
-            sqlHelper.<Void>doPreparedStatement(conn, "SELECT * FROM contact ORDER BY resume_uuid", ps -> {
+            sqlHelper.<Void>doPreparedStatement(conn, "SELECT * FROM contact", ps -> {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    for (Resume r : resumes) {
-                        if (rs.getString("resume_uuid").equals(r.getUuid())) {
-                            doAddContact(rs, r);
-                        }
-                    }
+                    Resume r = resumes.get(rs.getString("resume_uuid"));
+                    doAddContact(rs, r);
                 }
                 return null;
             });
-            sqlHelper.<Void>doPreparedStatement(conn, "SELECT * FROM section s ORDER BY s.resume_uuid", ps -> {
+            sqlHelper.<Void>doPreparedStatement(conn, "SELECT * FROM section", ps -> {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
-                    for (Resume r : resumes) {
-                        if (rs.getString("resume_uuid").equals(r.getUuid())) {
-                            doAddSection(rs, r);
-                        }
-                    }
+                    Resume r = resumes.get(rs.getString("resume_uuid"));
+                    doAddSection(rs, r);
                 }
                 return null;
             });
-            return resumes;
+
+            return new ArrayList<>(resumes.values());
         });
     }
 
