@@ -22,4 +22,4 @@ CREATE TABLE section
     content       TEXT     NOT NULL
 );
 CREATE UNIQUE INDEX section_uuid_type_index
-    ON section (resume_uuid, section);
+    ON section (resume_uuid, type);

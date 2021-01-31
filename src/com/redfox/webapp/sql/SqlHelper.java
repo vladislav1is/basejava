@@ -33,9 +33,9 @@ public class SqlHelper {
         }
     }
 
-    public <T> void doPreparedStatement(Connection conn, String sql, SupplierWithSqlExceptions<T> supplier) {
+    public <T> T doPreparedStatement(Connection conn, String sql, SupplierWithSqlExceptions<T> supplier) {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            supplier.execute(ps);
+            return supplier.execute(ps);
         } catch (SQLException e) {
             throw ExceptionUtil.convertException(e);
         }

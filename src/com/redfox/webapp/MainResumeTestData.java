@@ -13,7 +13,6 @@ public class MainResumeTestData {
     public static Resume constructResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-
         resume.addContact(ContactType.PHONE, "8_777_777_77_77");
         resume.addContact(ContactType.SKYPE, "skype1");
         resume.addContact(ContactType.MAIL, "mail@1");

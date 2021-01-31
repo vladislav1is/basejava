@@ -10,8 +10,7 @@ import java.util.Properties;
 
 public class Config {
 
-//    private static final File PROPS = new File("config\\resumes.properties");
-    private static final File PROPS = new File("C:\\Users\\Lis-56V88DG\\Desktop\\work\\basejava\\config\\resumes.properties");
+    private static final File PROPS = new File(getHomeDir(),"config\\resumes.properties");
 
     private static final Config INSTANCE = new Config();
 
@@ -43,5 +42,15 @@ public class Config {
 
     public SqlStorage getStorage() {
         return storage;
+    }
+
+    private static File getHomeDir() {
+        // Get the environment variable which specified in Tomcat VM options.
+        String prop = System.getProperty("homeDir");
+        File homeDir = new File(prop==null ? "." : prop);
+        if (!homeDir.isDirectory()) {
+            throw new IllegalStateException(homeDir + " is not directory");
+        }
+        return homeDir;
     }
 }

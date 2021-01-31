@@ -11,36 +11,14 @@ import org.junit.Test;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
-import static com.redfox.webapp.MainResumeTestData.constructResume;
+import static com.redfox.webapp.TestData.*;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = Config.get().getStorageDir();
     protected final Storage storage;
-
-    private static final String UUID_1 = UUID.randomUUID().toString();
-    private static final String UUID_2 = UUID.randomUUID().toString();
-    private static final String UUID_3 = UUID.randomUUID().toString();
-    private static final String UUID_4 = UUID.randomUUID().toString();
-
-    protected static final Resume R1;
-    protected static final Resume R2;
-    protected static final Resume R3;
-    protected static final Resume R4;
-
-    static {
-        R1 = constructResume(UUID_1, "Name1");
-        R2 = constructResume(UUID_2, "Name2");
-        R3 = constructResume(UUID_3, "Name3");
-        R4 = constructResume(UUID_4, "Name4");
-
-        R4.addContact(ContactType.MAIL, "mail@ya.ru");
-        R4.addContact(ContactType.PHONE,"444444");
-        R4.addContact(ContactType.SKYPE, "skype");
-    }
 
     public AbstractStorageTest(Storage storage) {
         this.storage = storage;
