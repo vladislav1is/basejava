@@ -27,6 +27,10 @@ public class ResumeServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setAttribute("resumes", STORAGE.getAllSorted());
+        request.setAttribute("contactType", ContactType.MAIL);
+        request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
+/*
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 //        response.setHeader("Content-Type", "text/html; charset=UTF-8");
@@ -34,6 +38,7 @@ public class ResumeServlet extends HttpServlet {
 
         String uuid = request.getParameter("uuid");
         response.getWriter().write(uuid == null ? printResumes() : printResumeByUuid(uuid));
+*/
     }
 
     private String printResumes() {
