@@ -1,8 +1,7 @@
 package com.redfox.webapp.web;
 
 import com.redfox.webapp.Config;
-import com.redfox.webapp.model.ContactType;
-import com.redfox.webapp.model.Resume;
+import com.redfox.webapp.model.*;
 import com.redfox.webapp.storage.SqlStorage;
 
 import javax.servlet.ServletConfig;
@@ -34,6 +33,31 @@ public class ResumeServlet extends HttpServlet {
                 resume.addContact(type, value);
             } else {
                 resume.getContacts().remove(type);
+            }
+        }
+        for (SectionType type : SectionType.values()) {
+            String sectionContent = request.getParameter(type.name());
+            AbstractSection section;
+            if (sectionContent != null && sectionContent.trim().length() != 0) {
+                switch (type) {
+                    case PERSONAL:
+                    case OBJECTIVE:
+                        section = new TextSection(sectionContent.trim());
+                        break;
+                    case ACHIEVEMENT:
+                    case QUALIFICATIONS:
+                        String[] strs = sectionContent.split(",");
+                        for (int i = 0; i < strs.length; i++) {
+                            strs[i] = strs[i].trim();
+                        }
+                        section = new ListTextSection(strs);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Section type " + type + " is illegal");
+                }
+                resume.addSection(type, section);
+            } else {
+                resume.getSections().remove(type);
             }
         }
         STORAGE.update(resume);

@@ -1,5 +1,6 @@
 <%@ page import="com.redfox.webapp.model.ContactType" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="com.redfox.webapp.model.SectionType" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
 <head>
@@ -15,23 +16,52 @@
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <dl>
             <dt>Имя:</dt>
-            <dd><input type="text" name="fullName" size="50" value="${resume.fullName}"></dd>
+            <dd>
+                <label>
+                    <input type="text" name="fullName" size="50" value="${resume.fullName}">
+                </label>
+            </dd>
         </dl>
         <h3>Контакты</h3>
-        <p>
-            <c:forEach var="type" items="<%=ContactType.values()%>">
-        <dl>
-            <td>${type.title}</td>
-            <dd><input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}"></dd>
-        </dl>
+        <c:forEach var="type" items="<%=ContactType.values()%>">
+            <dl>
+                <td>${type.title}</td>
+                <dd>
+                    <label>
+                        <input type="text" name="${type.name()}" size=30 value="${resume.getContact(type)}">
+                    </label>
+                </dd>
+            </dl>
         </c:forEach>
-        </p>
         <h3>Секции:</h3>
-        <p>
-            <input type="text" name="section" size=30 value="1">
-            <input type="text" name="section" size=30 value="2">
-            <input type="text" name="section" size=30 value="3">
-        </p>
+        <c:forEach var="type" items="<%=SectionType.values()%>">
+            <dl>
+                <c:choose>
+                    <c:when test="${type.name().equals('PERSONAL') || type.name().equals('OBJECTIVE')}">
+                        <td>${type.title}</td>
+                        <dd>
+                            <label>
+                                <input type="text" name="${type.name()}" size=30 value="${resume.getSection(type)}">
+                            </label>
+                        </dd>
+                    </c:when>
+                    <c:when test="${type.name().equals('ACHIEVEMENT') || type.name().equals('QUALIFICATIONS')}">
+                        <c:set var="tmpSection" scope="request" value="${resume.getSection(type).toString()}"></c:set>
+                        <td>${type.title}</td>
+                        <dd>
+                            <label>
+                                <input type="text" name="${type.name()}" size=30
+                                       value="${tmpSection.substring(1, tmpSection.length()-1)}">
+                            </label>
+                        </dd>
+                    </c:when>
+                    <c:otherwise>
+                        <p>Undefined</p>
+                    </c:otherwise>
+                </c:choose>
+                <c:remove var="tmpSection" scope="request"/>
+            </dl>
+        </c:forEach>
         <hr>
         <button type="submit">Сохранить</button>
         <button onclick="window.history.back()">Отменить</button>

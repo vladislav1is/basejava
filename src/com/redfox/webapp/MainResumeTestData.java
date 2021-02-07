@@ -16,7 +16,7 @@ public class MainResumeTestData {
         resume.addContact(ContactType.PHONE, "8_777_777_77_77");
         resume.addContact(ContactType.SKYPE, "skype1");
         resume.addContact(ContactType.MAIL, "mail@1");
-        resume.addContact(ContactType.LINCKEDIN, "linkedin1");
+        resume.addContact(ContactType.LINKEDIN, "linkedin1");
         resume.addContact(ContactType.GITHUB, "github1");
         resume.addContact(ContactType.STACKOVERFLOW, "linkedin1");
         resume.addContact(ContactType.HOMEPAGE, "https://www.mypage.xxx");
