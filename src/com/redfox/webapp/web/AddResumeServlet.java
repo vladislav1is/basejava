@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class ResumeServlet extends HttpServlet {
+public class AddResumeServlet extends HttpServlet {
 
     private static SqlStorage STORAGE; // Config.get().getStorage();
 
@@ -21,18 +21,14 @@ public class ResumeServlet extends HttpServlet {
         STORAGE = Config.get().getStorage();
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
-        String uuid = request.getParameter("uuid");
-        String fullName = request.getParameter("fullName");
-        Resume resume = STORAGE.get(uuid);
-        resume.setFullName(fullName);
+        Resume resume = new Resume(request.getParameter("fullName"));
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
             if (value != null && value.trim().length() != 0) {
                 resume.addContact(type, value);
-            } else {
-                resume.getContacts().remove(type);
             }
         }
         for (SectionType type : SectionType.values()) {
@@ -56,40 +52,9 @@ public class ResumeServlet extends HttpServlet {
                         throw new IllegalArgumentException("Section type " + type + " is illegal");
                 }
                 resume.addSection(type, section);
-            } else {
-                resume.getSections().remove(type);
             }
         }
-        STORAGE.update(resume);
+        STORAGE.save(resume);
         response.sendRedirect("resume");
-    }
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String uuid = request.getParameter("uuid");
-        String action = request.getParameter("action");
-        if (action == null) {
-            request.setAttribute("resumes", STORAGE.getAllSorted());
-            request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
-        }
-        Resume resume;
-        switch (action) {
-            case "delete":
-                STORAGE.delete(uuid);
-                response.sendRedirect("resume");
-                return;
-            case "view":
-            case "edit":
-                resume = STORAGE.get(uuid);
-                break;
-            case "add":
-                request.getRequestDispatcher("/WEB-INF/jsp/add.jsp").forward(request, response);
-                return;
-            default:
-                throw new IllegalArgumentException("Action " + action + " is illegal");
-        }
-        request.setAttribute("resume", resume);
-        request.getRequestDispatcher(
-                ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
-        ).forward(request, response);
     }
 }
