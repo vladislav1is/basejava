@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class AddResumeServlet extends HttpServlet {
 
@@ -42,11 +43,15 @@ public class AddResumeServlet extends HttpServlet {
                         break;
                     case ACHIEVEMENT:
                     case QUALIFICATIONS:
-                        String[] strs = sectionContent.split(",");
+                        String[] strs = sectionContent.split("\n");
+                        ArrayList<String> strings = new ArrayList<>();
                         for (int i = 0; i < strs.length; i++) {
-                            strs[i] = strs[i].trim();
+                            String tmpStr = strs[i];
+                            if (tmpStr.length() != 0) {
+                                strings.add(strs[i].trim());
+                            }
                         }
-                        section = new ListTextSection(strs);
+                        section = new ListTextSection(strings);
                         break;
                     default:
                         throw new IllegalArgumentException("Section type " + type + " is illegal");

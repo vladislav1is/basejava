@@ -21,5 +21,4 @@
         <servlet-name>addResumeServlet</servlet-name>
         <url-pattern>/addResume</url-pattern>
     </servlet-mapping>
-
 </web-app>

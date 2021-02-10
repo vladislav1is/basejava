@@ -47,8 +47,7 @@
                         <td>${type.title}</td>
                         <dd>
                             <label>
-                                <input type="text" name="${type.name()}" size=30
-                                       value="">
+                                <textarea name='${type}' cols=30 rows=5></textarea>
                             </label>
                         </dd>
                     </c:when>

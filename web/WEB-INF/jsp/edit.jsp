@@ -46,12 +46,13 @@
                         </dd>
                     </c:when>
                     <c:when test="${type.name().equals('ACHIEVEMENT') || type.name().equals('QUALIFICATIONS')}">
-                        <c:set var="tmpSection" scope="request" value="${resume.getSection(type).toString()}"></c:set>
+                        <c:set var="tmpSection" scope="request" value="${resume.getSection(type)}"></c:set>
+                        <jsp:useBean id="tmpSection" scope="request" type="com.redfox.webapp.model.ListTextSection"></jsp:useBean>
                         <td>${type.title}</td>
                         <dd>
                             <label>
-                                <input type="text" name="${type.name()}" size=30
-                                       value="${tmpSection.substring(1, tmpSection.length()-1)}">
+                                <textarea name='${type}' cols=30
+                                          rows=5><%=String.join("\n", (tmpSection.getItems()))%></textarea>
                             </label>
                         </dd>
                     </c:when>
