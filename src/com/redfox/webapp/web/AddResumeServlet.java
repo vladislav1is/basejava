@@ -46,9 +46,9 @@ public class AddResumeServlet extends HttpServlet {
                         String[] strs = sectionContent.split("\n");
                         ArrayList<String> strings = new ArrayList<>();
                         for (int i = 0; i < strs.length; i++) {
-                            String tmpStr = strs[i];
+                            String tmpStr = strs[i].trim();
                             if (tmpStr.length() != 0) {
-                                strings.add(strs[i].trim());
+                                strings.add(strs[i]);
                             }
                         }
                         section = new ListTextSection(strings);
