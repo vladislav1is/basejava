@@ -19,6 +19,8 @@ import static com.redfox.webapp.util.DateUtil.of;
 public class Organization implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    public static final Organization EMPTY = new Organization("", "", Experience.EMPTY);
+
     private Link homePage;
     private List<Experience> positions;
 
@@ -72,6 +74,8 @@ public class Organization implements Serializable {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Experience implements Serializable {
+        public static final Experience EMPTY = new Experience();
+
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         private LocalDate startDate;
         @XmlJavaTypeAdapter(LocalDateAdapter.class)

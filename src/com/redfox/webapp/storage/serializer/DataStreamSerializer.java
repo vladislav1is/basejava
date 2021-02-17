@@ -100,7 +100,7 @@ public class DataStreamSerializer implements SerializerStrategy {
     }
 
     private void readContacts(DataInputStream dis, Resume resume) throws IOException {
-        readCollectionWithException(resume, dis, r -> r.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
+        readCollectionWithException(resume, dis, r -> r.setContact(ContactType.valueOf(dis.readUTF()), dis.readUTF()));
     }
 
     private void readSections(DataInputStream dis, Resume resume) throws IOException {
@@ -123,7 +123,7 @@ public class DataStreamSerializer implements SerializerStrategy {
                 default:
                     throw new IllegalStateException("Unexpected value: " + sectionType);
             }
-            resume.addSection(sectionType, sectionValue);
+            resume.setSection(sectionType, sectionValue);
         });
     }
 

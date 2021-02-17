@@ -11,6 +11,8 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
+    <a href="resume?action=add"><img src="img/add.png" alt="add"></a>
+    <br>
     <table border="1" cellpadding="8" cellspacing="0">
         <tr>
             <th>Имя</th>
@@ -29,9 +31,6 @@
                 <td><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png" alt="edit"></a></td>
             </tr>
         </c:forEach>
-        <tr>
-            <th colspan="4"><a href="resume?uuid=&action=add"><img src="img/add.png" alt="add"></a></th>
-        </tr>
     </table>
 </section>
 <jsp:include page="fragments/footer.jsp"/>

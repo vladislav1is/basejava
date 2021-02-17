@@ -2,6 +2,7 @@ package com.redfox.webapp;
 
 import com.redfox.webapp.model.*;
 
+import java.time.Month;
 import java.util.Map;
 
 public class MainResumeTestData {
@@ -13,20 +14,19 @@ public class MainResumeTestData {
     public static Resume constructResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
-        resume.addContact(ContactType.PHONE, "8_777_777_77_77");
-        resume.addContact(ContactType.SKYPE, "skype1");
-        resume.addContact(ContactType.MAIL, "mail@1");
-        resume.addContact(ContactType.LINKEDIN, "linkedin1");
-        resume.addContact(ContactType.GITHUB, "github1");
-        resume.addContact(ContactType.STACKOVERFLOW, "linkedin1");
-        resume.addContact(ContactType.HOMEPAGE, "https://www.mypage.xxx");
+        resume.setContact(ContactType.PHONE, "8_777_777_77_77");
+        resume.setContact(ContactType.SKYPE, "skype1");
+        resume.setContact(ContactType.MAIL, "mail@1");
+        resume.setContact(ContactType.LINKEDIN, "linkedin1");
+        resume.setContact(ContactType.GITHUB, "github1");
+        resume.setContact(ContactType.STACKOVERFLOW, "linkedin1");
+        resume.setContact(ContactType.HOMEPAGE, "https://www.mypage.xxx");
 
-        resume.addSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
-        resume.addSection(SectionType.PERSONAL, new TextSection("Personal data1"));
-        resume.addSection(SectionType.ACHIEVEMENT, new ListTextSection("Achievement11", "Achievement12", "Achievement13"));
-        resume.addSection(SectionType.QUALIFICATIONS, new ListTextSection("Java", "SQL", "JavaScript"));
-    /*
-        resume.addSection(SectionType.EXPERIENCE,
+        resume.setSection(SectionType.OBJECTIVE, new TextSection("Objective1"));
+        resume.setSection(SectionType.PERSONAL, new TextSection("Personal data1"));
+        resume.setSection(SectionType.ACHIEVEMENT, new ListTextSection("Achievement11", "Achievement12", "Achievement13"));
+        resume.setSection(SectionType.QUALIFICATIONS, new ListTextSection("Java", "SQL", "JavaScript"));
+        resume.setSection(SectionType.EXPERIENCE,
                 new OrganizationSection(
                         new Organization("Organization1", "http://Organization1.ru",
                                 new Organization.Experience(2020, Month.FEBRUARY, "position11", "content11")
@@ -39,7 +39,7 @@ public class MainResumeTestData {
                         )
                 )
         );
-        resume.addSection(SectionType.EDUCATION,
+        resume.setSection(SectionType.EDUCATION,
                 new OrganizationSection(
                         new Organization("Сourses",
                                 new Organization.Experience(2020, Month.AUGUST, "listener"),
@@ -52,7 +52,6 @@ public class MainResumeTestData {
                                 new Organization.Experience(2001, Month.SEPTEMBER, 2005, Month.JULY, "student", "IT facultet")
                         )
                 ));
-    */
         return resume;
     }
 

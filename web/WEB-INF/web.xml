@@ -13,12 +13,4 @@
         <url-pattern>/resume</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>addResumeServlet</servlet-name>
-        <servlet-class>com.redfox.webapp.web.AddResumeServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>addResumeServlet</servlet-name>
-        <url-pattern>/addResume</url-pattern>
-    </servlet-mapping>
 </web-app>
