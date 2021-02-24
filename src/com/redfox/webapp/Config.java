@@ -9,19 +9,15 @@ import java.util.Properties;
 
 public class Config {
 
-//    private static final File PROPS = new File(getHomeDir(),"config\\resumes.properties");
     private static final String PROPS = "/resumes.properties";
-
     private static final Config INSTANCE = new Config();
 
     private final File storageDir;
     private final SqlStorage storage;
 
     private Config() {
-//        try (InputStream is = new FileInputStream(PROPS)) {
         try (InputStream is = Config.class.getResourceAsStream(PROPS)) {
-
-                Properties props = new Properties();
+            Properties props = new Properties();
             props.load(is);
             storageDir = new File(props.getProperty("storage.dir"));
             storage = new SqlStorage(
@@ -30,8 +26,7 @@ public class Config {
                     props.getProperty("db.password")
             );
         } catch (IOException e) {
-//            throw new IllegalStateException("Invalid com.redfox.webapp.config file " + PROPS.getAbsolutePath());
-            throw new IllegalStateException("Invalid com.redfox.webapp.config file " + PROPS);
+            throw new IllegalStateException("Invalid config file " + PROPS);
         }
     }
 
@@ -46,14 +41,4 @@ public class Config {
     public SqlStorage getStorage() {
         return storage;
     }
-
-//    private static File getHomeDir() {
-//        // Get the environment variable which specified in Tomcat VM options.
-//        String prop = System.getProperty("homeDir");
-//        File homeDir = new File(prop==null ? "." : prop);
-//        if (!homeDir.isDirectory()) {
-//            throw new IllegalStateException(homeDir + " is not directory");
-//        }
-//        return homeDir;
-//    }
 }

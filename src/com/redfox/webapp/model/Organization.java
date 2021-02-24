@@ -99,7 +99,7 @@ public class Organization implements Serializable {
         }
 
         public Experience(int startYear, Month startMonth, int endYear, Month endMonth, String title) {
-            this(startYear, startMonth, endYear, endMonth, title, null);
+            this(of(startYear, startMonth), of(endYear, endMonth), title, null);
         }
 
         public Experience(LocalDate startDate, LocalDate endDate, String title, String description) {

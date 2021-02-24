@@ -32,11 +32,16 @@
             <c:set var="section" value="${sectionEntry.value}"/>
             <jsp:useBean id="section" type="com.redfox.webapp.model.AbstractSection"/>
             <tr>
-                <td><h2><a name="type.name">${type.title}</a></h2></td>
+                <td colspan="2">
+                    <h2>
+                        <a name="type.name">${type.title}</a>
+                    </h2>
+                </td>
                 <c:if test="${type=='OBJECTIVE'}">
                     <td colspan="2">
-                        <b><%=((TextSection) section).getContent()%>
-                        </b>
+                        <h3>
+                            <%=((TextSection) section).getContent()%>
+                        </h3>
                     </td>
                 </c:if>
             </tr>

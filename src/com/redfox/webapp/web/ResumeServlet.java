@@ -78,7 +78,7 @@ public class ResumeServlet extends HttpServlet {
                                 String[] titles = request.getParameterValues(pfx + "title");
                                 String[] descriptions = request.getParameterValues(pfx + "description");
                                 for (int j = 0; j < titles.length; j++) {
-                                    if (!HtmlUtil.isEmpty(titles[j])) {
+                                    if (!HtmlUtil.isEmpty(titles[j]) || !HtmlUtil.isEmpty(startDates[j])) {
                                         positions.add(new Organization.Experience(DateUtil.parse(startDates[j]), DateUtil.parse(endDates[j]), titles[j], descriptions[j]));
                                     }
                                 }
